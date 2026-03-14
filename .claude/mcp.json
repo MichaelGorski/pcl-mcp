@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "pcl": {
+      "command": "node",
+      "args": ["./node_modules/pcl-mcp/dist/src/server.js", "--product-dir", "./product"],
+      "env": {}
+    }
+  }
+}

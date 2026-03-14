@@ -1,0 +1,56 @@
+{
+  "name": "pcl-mcp",
+  "version": "0.1.0",
+  "description": "Product Context Layer — MCP server for AI-assisted product development",
+  "type": "module",
+  "main": "./dist/src/server.js",
+  "types": "./dist/src/server.d.ts",
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
+  "bin": {
+    "pcl": "./dist/bin/pcl.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/server.ts",
+    "serve": "node dist/src/server.js",
+    "init": "tsx bin/pcl.ts init",
+    "typecheck": "tsc --noEmit",
+    "prepare": "tsc"
+  },
+  "keywords": [
+    "mcp",
+    "product-context",
+    "ai",
+    "claude",
+    "cursor",
+    "windsurf",
+    "product-management",
+    "semantic-search"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/michaelsathyagorski/pcl-mcp.git"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@huggingface/transformers": "^3.4.0",
+    "@modelcontextprotocol/sdk": "^1.10.0",
+    "better-sqlite3": "^11.9.0",
+    "chokidar": "^4.0.3",
+    "gray-matter": "^4.0.3",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.8.0"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}
