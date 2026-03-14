@@ -121,6 +121,11 @@ export function closeDB(): void {
 
 function prepareStatements(db: Database.Database) {
   return {
+    // Delete any existing row with the same (id, type) but different path
+    // before upserting — prevents UNIQUE constraint violations when files move
+    deleteByIdType: db.prepare(
+      "DELETE FROM files WHERE id = @id AND type = @type AND path != @path"
+    ),
     upsert: db.prepare(`
       INSERT INTO files (id, type, path, frontmatter, body, full_text, title, summary, critical, mtime, hash, embedding)
       VALUES (@id, @type, @path, @frontmatter, @body, @full_text, @title, @summary, @critical, @mtime, @hash, @embedding)
@@ -200,7 +205,7 @@ function toIndexedFile(row: DBRow): IndexedFile {
 // ─── Mutations ───────────────────────────────────────────────────────────────
 
 export function upsertFile(db: Database.Database, file: IndexedFile): void {
-  getStmts(db).upsert.run({
+  const params = {
     id:          file.id,
     type:        file.type,
     path:        file.path,
@@ -213,7 +218,11 @@ export function upsertFile(db: Database.Database, file: IndexedFile): void {
     mtime:       file.mtime,
     hash:        file.hash,
     embedding:   file.embedding.length > 0 ? packEmbedding(file.embedding) : null,
-  });
+  };
+  const stmts = getStmts(db);
+  // Remove stale row with same (id, type) but different path to avoid UNIQUE violation
+  stmts.deleteByIdType.run({ id: file.id, type: file.type, path: file.path });
+  stmts.upsert.run(params);
   invalidateEmbeddingCache();
 }
 
