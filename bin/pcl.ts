@@ -301,11 +301,17 @@ This project uses PCL for product knowledge. An MCP server is running (see mcp c
 
   try {
     await access(claudeMd, constants.F_OK);
-    console.log(`\n  ↷  CLAUDE.md exists — add the PCL instructions manually (printed above)`);
-    console.log(bridge);
+    const existing = await readFile(claudeMd, "utf8");
+    if (existing.includes("## Product Context Layer (PCL)")) {
+      console.log(`\n  ↷  CLAUDE.md already contains PCL instructions, skipped`);
+      skipped++;
+    } else {
+      await writeFile(claudeMd, existing.trimEnd() + "\n\n" + bridge, "utf8");
+      console.log(`  ✓  CLAUDE.md (appended PCL instructions)`);
+      created++;
+    }
   } catch {
-    const existing = "";
-    await writeFile(claudeMd, existing + bridge, "utf8");
+    await writeFile(claudeMd, bridge, "utf8");
     console.log(`  ✓  CLAUDE.md`);
     created++;
   }
