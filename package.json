@@ -11,7 +11,7 @@
     "LICENSE"
   ],
   "bin": {
-    "pcl": "./dist/bin/pcl.js"
+    "pcl": "dist/bin/pcl.js"
   },
   "scripts": {
     "build": "tsc",
@@ -33,7 +33,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/michaelsathyagorski/pcl-mcp.git"
+    "url": "git+https://github.com/michaelsathyagorski/pcl-mcp.git"
   },
   "license": "MIT",
   "dependencies": {
