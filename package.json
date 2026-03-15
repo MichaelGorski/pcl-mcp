@@ -1,5 +1,5 @@
 {
-  "name": "@michaelgorski/pcl-mcp",
+  "name": "pcl-mcp",
   "version": "0.2.1",
   "description": "Product Context Layer — MCP server for AI-assisted product development",
   "type": "module",
@@ -19,7 +19,9 @@
     "serve": "node dist/src/server.js",
     "init": "tsx bin/pcl.ts init",
     "typecheck": "tsc --noEmit",
-    "prepare": "tsc"
+    "prepare": "tsc",
+    "publish:npm": "npm publish --registry https://registry.npmjs.org",
+    "publish:github": "npm pkg set name='@michaelgorski/pcl-mcp' && npm publish --registry https://npm.pkg.github.com && npm pkg set name='pcl-mcp'"
   },
   "keywords": [
     "mcp",
@@ -51,7 +53,8 @@
     "typescript": "^5.8.0"
   },
   "publishConfig": {
-    "@michaelgorski:registry": "https://npm.pkg.github.com"
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
   },
   "engines": {
     "node": ">=22.0.0"

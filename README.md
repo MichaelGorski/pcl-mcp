@@ -7,8 +7,7 @@ Instead of re-explaining your personas, journeys, and architecture decisions eve
 ## Quick Start
 
 ```bash
-echo '@michaelgorski:registry=https://npm.pkg.github.com' >> .npmrc
-npm install @michaelgorski/pcl-mcp
+npm install pcl-mcp
 npx pcl init
 # add MCP config (see Agent Configuration below), then start a new agent session
 ```
@@ -53,23 +52,12 @@ You ask your agent: *"Build the checkout flow"*
 
 ## Install
 
-PCL is published as `@michaelgorski/pcl-mcp` on GitHub Packages.
-
-```
-@michaelgorski:registry=https://npm.pkg.github.com
-```
-
-### 1. Install
-
 ```bash
-npm install @michaelgorski/pcl-mcp
-```
-
-### 2. Scaffold the product folder
-
-```bash
+npm install pcl-mcp
 npx pcl init            # creates ./product with templates
 ```
+
+Also available on GitHub Packages as `@michaelgorski/pcl-mcp`.
 
 ## Import existing docs
 
@@ -97,7 +85,7 @@ Supported classifications: **persona**, **journey**, **spec**, **decision**, **d
   "mcpServers": {
     "pcl": {
       "command": "node",
-      "args": ["./node_modules/@michaelgorski/pcl-mcp/dist/src/server.js"]
+      "args": ["./node_modules/pcl-mcp/dist/src/server.js"]
     }
   }
 }
@@ -108,7 +96,7 @@ Supported classifications: **persona**, **journey**, **spec**, **decision**, **d
 "mcp.servers": {
   "pcl": {
     "command": "npx",
-    "args": ["@michaelgorski/pcl-mcp", "serve"]
+    "args": ["pcl-mcp", "serve"]
   }
 }
 ```
@@ -119,7 +107,7 @@ Supported classifications: **persona**, **journey**, **spec**, **decision**, **d
   "mcpServers": {
     "pcl": {
       "command": "npx",
-      "args": ["@michaelgorski/pcl-mcp", "serve"]
+      "args": ["pcl-mcp", "serve"]
     }
   }
 }
