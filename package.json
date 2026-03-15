@@ -33,7 +33,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/michaelsathyagorski/pcl-mcp.git"
+    "url": "git+https://github.com/michaelgorski/pcl-mcp.git"
   },
   "license": "MIT",
   "dependencies": {
