@@ -1,6 +1,6 @@
 {
   "name": "@michaelgorski/pcl-mcp",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Product Context Layer — MCP server for AI-assisted product development",
   "type": "module",
   "main": "./dist/src/server.js",
