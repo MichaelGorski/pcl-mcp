@@ -16,10 +16,15 @@ import { McpServer, ResourceTemplate } from "@modelcontextprotocol/sdk/server/mc
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { resolve, join } from "node:path";
 import { existsSync } from "node:fs";
+import { createRequire } from "node:module";
 import { openDB, closeDB, getProductFile, getCritical, getFileById, listByType } from "./db.js";
-import { fullIndex, startWatcher } from "./indexer.js";
+import { fullIndex, startWatcher, backfillEmbeddings } from "./indexer.js";
 import { handleTool, TOOL_SCHEMAS, renderFile, type ToolName } from "./tools.js";
+
 import type { FileType } from "./types.js";
+
+const require = createRequire(import.meta.url);
+const { version } = require("../package.json") as { version: string };
 
 // ─── Resolve product dir ───────────────────────────────────────────────────────
 
@@ -60,6 +65,13 @@ async function main() {
   if (result.errors.length > 0) {
     log(`Schema errors:\n  ${result.errors.join("\n  ")}`);
   }
+  if (result.total === 0) {
+    log(`⚠ No product files found. Run 'pcl init' to scaffold the product folder.`);
+  }
+
+  // Backfill embeddings for files that failed embedding previously
+  const backfilled = await backfillEmbeddings(db);
+  if (backfilled > 0) log(`Backfilled ${backfilled} embeddings`);
 
   // Start file watcher for live updates
   const stopWatcher = await startWatcher(db, productDir, (event, path) => {
@@ -70,7 +82,7 @@ async function main() {
 
   const server = new McpServer({
     name:    "pcl-mcp",
-    version: "0.1.0",
+    version,
   });
 
   // ─── Tools ──────────────────────────────────────────────────────────────────

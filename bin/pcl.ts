@@ -2,9 +2,13 @@
 // bin/pcl.ts
 // CLI: pcl init | pcl serve | pcl status
 
-import { mkdir, writeFile, readFile, access } from "node:fs/promises";
+import { mkdir, writeFile, readFile, readdir, access } from "node:fs/promises";
 import { join, resolve } from "node:path";
-import { constants } from "node:fs";
+import { constants, existsSync } from "node:fs";
+import { createRequire } from "node:module";
+
+const require = createRequire(import.meta.url);
+const { version } = require("../package.json") as { version: string };
 
 const cmd = process.argv[2];
 const args = process.argv.slice(3);
@@ -280,23 +284,38 @@ async function init() {
 
 This project uses PCL for product knowledge. An MCP server is running (see mcp config).
 
+**IMPORTANT:** PCL contains ALL product knowledge — personas, journeys, specs, decisions, and domain rules.
+Read ALL categories thoroughly. Do not skip any folder or assume content is irrelevant.
+
 ### At the start of every coding session:
-1. Call \`pcl_product_summary\` — orient yourself
+1. Call \`pcl_product_summary\` — orient yourself with the product north star
 2. Call \`pcl_get_domain("*critical")\` — load non-violable business rules
+3. Call \`pcl_list({ type: "decisions" })\` — review architecture decisions
+4. Call \`pcl_list({ type: "personas" })\` — know who you are building for
+5. Call \`pcl_list({ type: "specs" })\` — see what features are defined
 
 ### Before working on any user-facing feature:
-- Call \`pcl_list({ type: "personas" })\` then \`pcl_get_persona(id)\` for the relevant persona
-- Call \`pcl_list({ type: "journeys" })\` then \`pcl_get_journey(id)\` for the relevant journey
-- Call \`pcl_list({ type: "specs" })\` then \`pcl_get_spec(id)\` for the feature spec if it exists
+- Call \`pcl_get_persona(id)\` for EVERY relevant persona — read full detail
+- Call \`pcl_get_journey(id)\` for the relevant user journey — follow every step
+- Call \`pcl_get_spec(id)\` for the feature spec — check all acceptance criteria
+- Call \`pcl_get_decision(id)\` for any architecture decision that affects the feature
 
-### When unsure about product decisions:
-- Call \`pcl_search({ query: "your question here" })\` to find relevant product knowledge
-- Call \`pcl_get_decision(id)\` for architecture decisions affecting your current task
+### Before making any architectural or technical choice:
+- Call \`pcl_list({ type: "decisions" })\` then \`pcl_get_decision(id)\` for relevant ADRs
+- Call \`pcl_get_domain("*critical")\` if the change touches billing, auth, or data models
+- Call \`pcl_search({ query: "your topic" })\` to find related product knowledge
+
+### When exploring or unsure:
+- Call \`pcl_search({ query: "your question" })\` — hybrid semantic + keyword search
+- Call \`pcl_related(id)\` — discover connected context
+- Call \`pcl_list({ type: "domain" })\` then \`pcl_get_domain(id)\` — read ALL domain rules
 
 ### NEVER:
 - Make assumptions about who the user is — always load the persona
-- Violate any rule in domain/core-rules.md
+- Skip loading decisions before making architectural choices
+- Violate any rule in domain rules (critical or otherwise)
 - Build features not covered by an accepted spec without asking first
+- Assume you know the product context — always query PCL first
 `;
 
   try {
@@ -321,7 +340,149 @@ This project uses PCL for product knowledge. An MCP server is running (see mcp c
   console.log("  1. Edit product/product.md with your actual product details");
   console.log("  2. Rename and fill in the example persona, journey, and spec files");
   console.log("  3. Add your MCP server config (see README)");
-  console.log("  4. npm run serve\n");
+  console.log("  4. Start a new agent session — PCL loads automatically\n");
+}
+
+// ─── Status ──────────────────────────────────────────────────────────────────
+
+/** Count .md files on disk per subdirectory (no DB needed) */
+async function countDiskFiles(productDir: string): Promise<{ product: boolean; counts: Record<string, number> }> {
+  const counts: Record<string, number> = {
+    personas: 0, journeys: 0, specs: 0, decisions: 0, domain: 0,
+  };
+  const hasProduct = existsSync(join(productDir, "product.md"));
+
+  for (const dir of Object.keys(counts)) {
+    const dirPath = join(productDir, dir);
+    if (!existsSync(dirPath)) continue;
+    try {
+      const entries = await readdir(dirPath);
+      counts[dir] = entries.filter((e) => e.endsWith(".md") && !e.startsWith(".")).length;
+    } catch { /* dir unreadable */ }
+  }
+
+  return { product: hasProduct, counts };
+}
+
+function resolveStatusDir(): string {
+  // Support --product-dir flag (same as serve)
+  const dirFlagIdx = args.indexOf("--product-dir");
+  if (dirFlagIdx !== -1 && args[dirFlagIdx + 1]) {
+    return resolve(args[dirFlagIdx + 1]!);
+  }
+  const candidates = [
+    join(process.cwd(), "product"),
+    join(process.cwd(), ".product"),
+  ];
+  return candidates.find((c) => existsSync(c)) ?? candidates[0]!;
+}
+
+async function status() {
+  const productDir = resolveStatusDir();
+
+  if (!existsSync(productDir)) {
+    console.log(`\nNo product directory found at ${productDir}`);
+    console.log(`Run 'pcl init' to scaffold the product folder.\n`);
+    return;
+  }
+
+  // Always show disk file counts (works without server having run)
+  const disk = await countDiskFiles(productDir);
+
+  console.log("\nPCL Status");
+  console.log(`  Product dir:  ${productDir}`);
+
+  if (disk.product) {
+    console.log(`  Product file: ✓ product.md`);
+  } else {
+    console.log(`  Product file: ✗ product.md not found`);
+  }
+
+  const typeMap: Record<string, string> = {
+    personas: "persona", journeys: "journey", specs: "spec",
+    decisions: "decision", domain: "domain",
+  };
+
+  // Check if DB exists (server has been run at least once)
+  const dbPath = join(productDir, ".pcl.db");
+  const hasDB = existsSync(dbPath);
+
+  let totalDisk = disk.product ? 1 : 0;
+  let totalIndexed = 0;
+  let totalEmbedded = 0;
+
+  // If DB exists, also show indexed/embedded counts
+  let dbData: Record<string, { indexed: number; embedded: number }> | null = null;
+  if (hasDB) {
+    const { openDB, closeDB, getProductFile, listByType } = await import("../src/db.js");
+    const db = openDB(productDir);
+    dbData = {};
+
+    const product = getProductFile(db);
+    if (product) {
+      totalIndexed++;
+      if (product.embedding.length > 0) totalEmbedded++;
+    }
+
+    for (const [plural, type] of Object.entries(typeMap)) {
+      const files = listByType(db, type as import("../src/types.js").FileType);
+      const embedded = files.filter((f) => f.embedding.length > 0).length;
+      dbData[plural] = { indexed: files.length, embedded };
+      totalIndexed += files.length;
+      totalEmbedded += embedded;
+    }
+
+    closeDB();
+  }
+
+  console.log("\n  Files by type:");
+
+  for (const dir of Object.keys(disk.counts)) {
+    const onDisk = disk.counts[dir]!;
+    totalDisk += onDisk;
+    const label = dir.padEnd(12);
+
+    if (dbData && dbData[dir]) {
+      const { indexed, embedded } = dbData[dir];
+      console.log(`    ${label} ${onDisk} on disk, ${indexed} indexed, ${embedded} embedded`);
+    } else {
+      console.log(`    ${label} ${onDisk} on disk`);
+    }
+  }
+
+  if (dbData) {
+    console.log(`\n  Total: ${totalDisk} on disk, ${totalIndexed} indexed, ${totalEmbedded} embedded`);
+  } else {
+    console.log(`\n  Total: ${totalDisk} on disk`);
+    console.log(`\n  Note: No index found. Start the MCP server to index files and generate embeddings.`);
+  }
+}
+
+// ─── Help text ───────────────────────────────────────────────────────────────
+
+function printHelp() {
+  console.log(`
+pcl — Product Context Layer CLI (v${version})
+
+Commands:
+  init [dir]              Scaffold /product folder with templates (default: ./product)
+  init --scan [dir]       Scan repo for existing .md files, import, then scaffold remaining templates
+  init --scan-only [dir]  Scan and import only, don't scaffold templates
+  serve                   Start the MCP server (reads --product-dir flag)
+  status                  Show file counts and embedding coverage (reads --product-dir flag)
+
+Options:
+  --help, -h              Show this help text
+  --version, -v           Show version number
+
+Examples:
+  npx pcl-mcp init
+  npx pcl-mcp init --scan
+  npx pcl-mcp init --scan-only
+  npx pcl-mcp init ./my-product-docs
+  npx pcl-mcp serve --product-dir ./product
+  npx pcl-mcp status
+`);
 }
 
 // ─── Router ───────────────────────────────────────────────────────────────────
@@ -334,21 +495,15 @@ switch (cmd) {
     // Delegate to the server module
     import("../src/server.js").catch(console.error);
     break;
+  case "status":
+    status().catch(console.error);
+    break;
+  case "--version":
+  case "-v":
+    console.log(version);
+    break;
+  case "--help":
+  case "-h":
   default:
-    console.log(`
-pcl — Product Context Layer CLI
-
-Commands:
-  init [dir]              Scaffold /product folder with templates (default: ./product)
-  init --scan [dir]       Scan repo for existing .md files, import, then scaffold remaining templates
-  init --scan-only [dir]  Scan and import only, don't scaffold templates
-  serve                   Start the MCP server (reads --product-dir flag)
-
-Examples:
-  npx pcl-mcp init
-  npx pcl-mcp init --scan
-  npx pcl-mcp init --scan-only
-  npx pcl-mcp init ./my-product-docs
-  npx pcl-mcp serve --product-dir ./product
-`);
+    printHelp();
 }

@@ -4,6 +4,37 @@
 
 Instead of re-explaining your personas, journeys, and architecture decisions every session, PCL serves them via MCP on demand. Any agent (Claude Code, Cursor, Windsurf) queries exactly what it needs, when it needs it.
 
+## Quick Start
+
+```bash
+echo '@michaelgorski:registry=https://npm.pkg.github.com' >> .npmrc
+npm install @michaelgorski/pcl-mcp
+npx pcl init
+# add MCP config (see Agent Configuration below), then start a new agent session
+```
+
+## Why PCL?
+
+**Without PCL**, every coding session starts from scratch:
+- Agents can't find your product docs unless you paste them into the prompt
+- Context windows get bloated with irrelevant information
+- You re-explain personas, business rules, and specs every single time
+- No guardrails — agents make assumptions that violate your business rules
+
+**With PCL**, agents load product knowledge on demand:
+- Progressive disclosure — session start costs ~600 tokens (product summary + critical rules)
+- Hybrid search (BM25 + semantic) finds the right context without you guiding it
+- Live reindex on file save — edit a spec, agent sees it immediately
+- Structured Zod schemas — agents get predictable, parseable frontmatter every time
+
+### Concrete use case
+
+You ask your agent: *"Build the checkout flow"*
+
+**Without PCL:** You paste your billing rules doc, the persona file, the journey map, and the spec into the chat. 4,000 tokens before the agent writes a line of code. Next session, you do it again.
+
+**With PCL:** The agent auto-loads critical billing rules at session start (~200 tokens). When it starts the checkout feature, it pulls the relevant persona, fetches the journey steps, and checks the spec's acceptance criteria — all on-demand, only what's needed. Every session, automatically.
+
 ## Stack
 
 | Layer | Technology | Why |
@@ -16,13 +47,51 @@ Instead of re-explaining your personas, journeys, and architecture decisions eve
 | Validation | Zod schemas | Agents rely on predictable frontmatter |
 | File watching | Chokidar v4 | Live reindex on save |
 
+## Prerequisites
+
+- **Node.js >= 22** (required — PCL uses modern Node APIs)
+
 ## Install
 
-```bash
-npm install pcl-mcp
-npx pcl init            # scaffold /product folder
-npm run serve           # start MCP server
+PCL is published as `@michaelgorski/pcl-mcp` on GitHub Packages.
+
+### 1. Configure npm for the GitHub registry
+
+Create or update `.npmrc` in your project root:
+
 ```
+@michaelgorski:registry=https://npm.pkg.github.com
+```
+
+### 2. Install
+
+```bash
+npm install @michaelgorski/pcl-mcp
+```
+
+### 3. Scaffold the product folder
+
+```bash
+npx pcl init            # creates ./product with templates
+```
+
+## Import existing docs
+
+If you already have markdown documentation in your repo, PCL can scan, classify, and import it automatically:
+
+```bash
+npx pcl init --scan         # scan + import existing docs, then scaffold remaining templates
+npx pcl init --scan-only    # scan + import only, skip template scaffolding
+```
+
+The scanner:
+- Walks your repo for `.md` files (skips `node_modules`, `dist`, `.git`, etc.)
+- Classifies each file by directory name, filename, frontmatter keys, and content patterns
+- Transforms matching files into PCL format with proper frontmatter
+- Copies them into the `product/` folder under the correct category
+- Skips categories that already have imported files (no duplicate templates)
+
+Supported classifications: **persona**, **journey**, **spec**, **decision**, **domain**, **product**
 
 ## Agent configuration
 
@@ -32,7 +101,7 @@ npm run serve           # start MCP server
   "mcpServers": {
     "pcl": {
       "command": "node",
-      "args": ["./node_modules/pcl-mcp/dist/src/server.js"]
+      "args": ["./node_modules/@michaelgorski/pcl-mcp/dist/src/server.js"]
     }
   }
 }
@@ -43,7 +112,19 @@ npm run serve           # start MCP server
 "mcp.servers": {
   "pcl": {
     "command": "npx",
-    "args": ["pcl-mcp", "serve"]
+    "args": ["@michaelgorski/pcl-mcp", "serve"]
+  }
+}
+```
+
+### Windsurf — MCP config
+```json
+{
+  "mcpServers": {
+    "pcl": {
+      "command": "npx",
+      "args": ["@michaelgorski/pcl-mcp", "serve"]
+    }
   }
 }
 ```
@@ -68,17 +149,25 @@ npm run serve           # start MCP server
 
 ## Tools available to agents
 
-| Tool | When to use |
-|---|---|
-| `pcl_product_summary` | Always — call at session start |
-| `pcl_get_domain("*critical")` | Always — load hard business rules |
-| `pcl_get_persona(id)` | Before any user-facing feature |
-| `pcl_get_journey(id)` | Before any user flow code |
-| `pcl_get_spec(id)` | Before implementing a feature |
-| `pcl_get_decision(id)` | Before architectural decisions |
-| `pcl_list(type)` | Discover what exists |
-| `pcl_search(query)` | When you don't know the ID |
-| `pcl_related(id)` | Discover connected context |
+| Tool | Params | Description |
+|---|---|---|
+| `pcl_product_summary` | — | Load the product north-star document. Call at session start. |
+| `pcl_get_persona(id)` | `id`: persona ID | Get a user persona by ID. Call before any user-facing feature. |
+| `pcl_get_journey(id)` | `id`: journey ID | Get a user journey by ID including step-by-step detail. |
+| `pcl_get_spec(id)` | `id`: spec ID | Get a feature spec by ID including acceptance criteria. |
+| `pcl_get_decision(id)` | `id`: decision ID | Get an architecture decision record (ADR) by ID. |
+| `pcl_get_domain(id)` | `id`: domain ID or `"*critical"` | Get domain rules by ID. Pass `"*critical"` to load all critical rules. |
+| `pcl_list({ type })` | `type`: `"personas"` \| `"journeys"` \| `"specs"` \| `"decisions"` \| `"domain"` | List all files of a given type with IDs, titles, and summaries. |
+| `pcl_search({ query })` | `query`, `mode?` (`"hybrid"` \| `"semantic"` \| `"keyword"`), `types?`, `top_k?` | Hybrid semantic + keyword search across all product files. |
+| `pcl_related(id)` | `id`: source file ID, `top_k?` | Find files semantically related to a given file ID. |
+
+## Prompts & Resources
+
+In addition to tools, PCL exposes MCP prompts and resources:
+
+**Prompt: `session-start`** — Returns a product summary + all critical domain rules. Agents can call this at the start of every coding session to orient themselves without loading every file.
+
+**Resources: `pcl://files/{type}/{id}`** — Each indexed file is available as an MCP resource. Agents can browse and read individual files directly via the resource URI (e.g., `pcl://files/persona/example-user`).
 
 ## How hybrid search works
 
