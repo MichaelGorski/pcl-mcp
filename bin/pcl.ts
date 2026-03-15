@@ -6,6 +6,7 @@ import { mkdir, writeFile, readFile, readdir, access } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { constants, existsSync } from "node:fs";
 import { createRequire } from "node:module";
+import { createInterface } from "node:readline";
 
 const require = createRequire(import.meta.url);
 const { version } = (() => {
@@ -16,6 +17,28 @@ const { version } = (() => {
 const cmd = process.argv[2];
 const args = process.argv.slice(3);
 const hasFlag = (flag: string) => args.includes(flag);
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+async function promptYesNo(question: string, defaultYes = true): Promise<boolean> {
+  const rl = createInterface({ input: process.stdin, output: process.stdout });
+  const hint = defaultYes ? "[Y/n]" : "[y/N]";
+  return new Promise((resolve) => {
+    rl.question(`${question} ${hint} `, (answer) => {
+      rl.close();
+      const trimmed = answer.trim().toLowerCase();
+      if (trimmed === "") resolve(defaultYes);
+      else resolve(trimmed === "y" || trimmed === "yes");
+    });
+  });
+}
+
+// ─── Bridge version & markers ─────────────────────────────────────────────────
+
+const PCL_BRIDGE_VERSION = 1;
+const BRIDGE_START_RE = /<!-- pcl-bridge:v(\d+) -->/;
+const BRIDGE_END = "<!-- /pcl-bridge -->";
+const LEGACY_HEADING = "## Product Context Layer (PCL)";
 
 // ─── Templates ────────────────────────────────────────────────────────────────
 
@@ -281,8 +304,10 @@ async function init() {
   }
 
   // Write CLAUDE.md bridge
-  const claudeMd = join(process.cwd(), "CLAUDE.md");
-  const bridge = `
+  const noClaude = hasFlag("--no-claude");
+  if (!noClaude) {
+    const claudeMd = join(process.cwd(), "CLAUDE.md");
+    const bridgeBlock = `<!-- pcl-bridge:v${PCL_BRIDGE_VERSION} -->
 ## Product Context Layer (PCL)
 
 This project uses PCL for product knowledge. An MCP server is running (see mcp config).
@@ -319,23 +344,94 @@ Read ALL categories thoroughly. Do not skip any folder or assume content is irre
 - Violate any rule in domain rules (critical or otherwise)
 - Build features not covered by an accepted spec without asking first
 - Assume you know the product context — always query PCL first
-`;
+${BRIDGE_END}`;
 
-  try {
-    await access(claudeMd, constants.F_OK);
-    const existing = await readFile(claudeMd, "utf8");
-    if (existing.includes("## Product Context Layer (PCL)")) {
-      console.log(`\n  ↷  CLAUDE.md already contains PCL instructions, skipped`);
-      skipped++;
-    } else {
-      await writeFile(claudeMd, existing.trimEnd() + "\n\n" + bridge, "utf8");
-      console.log(`  ✓  CLAUDE.md (appended PCL instructions)`);
-      created++;
+    let fileExists = false;
+    let existing = "";
+    try {
+      await access(claudeMd, constants.F_OK);
+      fileExists = true;
+      existing = await readFile(claudeMd, "utf8");
+    } catch {
+      // File doesn't exist
     }
-  } catch {
-    await writeFile(claudeMd, bridge, "utf8");
-    console.log(`  ✓  CLAUDE.md`);
-    created++;
+
+    if (!fileExists) {
+      // File doesn't exist — prompt to create
+      const create = await promptYesNo("Create CLAUDE.md with PCL instructions?");
+      if (create) {
+        await writeFile(claudeMd, bridgeBlock + "\n", "utf8");
+        console.log(`  ✓  CLAUDE.md`);
+        created++;
+      } else {
+        console.log(`  ↷  CLAUDE.md (skipped by user)`);
+        skipped++;
+      }
+    } else {
+      const markerMatch = existing.match(BRIDGE_START_RE);
+      const hasEndMarker = existing.includes(BRIDGE_END);
+
+      if (markerMatch) {
+        // Has versioned markers
+        const existingVersion = parseInt(markerMatch[1]!, 10);
+
+        if (!hasEndMarker) {
+          // Malformed: start marker without end marker
+          console.warn(`\n  ⚠  CLAUDE.md has a PCL bridge start marker but no end marker — skipping to avoid corruption`);
+          skipped++;
+        } else if (existingVersion >= PCL_BRIDGE_VERSION) {
+          // Up to date
+          console.log(`\n  ↷  CLAUDE.md PCL instructions up to date (v${existingVersion})`);
+          skipped++;
+        } else {
+          // Auto-update: replace between markers
+          const startIdx = existing.indexOf(markerMatch[0]);
+          const endIdx = existing.indexOf(BRIDGE_END) + BRIDGE_END.length;
+          const before = existing.slice(0, startIdx);
+          const after = existing.slice(endIdx);
+          await writeFile(claudeMd, before + bridgeBlock + after, "utf8");
+          console.log(`  ✓  CLAUDE.md (updated PCL instructions v${existingVersion} → v${PCL_BRIDGE_VERSION})`);
+          created++;
+        }
+      } else if (existing.includes(LEGACY_HEADING)) {
+        // Legacy section without markers — prompt to migrate
+        const migrate = await promptYesNo("CLAUDE.md has legacy PCL instructions (no version markers). Update to versioned format?");
+        if (migrate) {
+          // Find the legacy section boundaries
+          const legacyStart = existing.indexOf(LEGACY_HEADING);
+          // Look for the next ## heading after the legacy section, or EOF
+          const afterLegacy = existing.slice(legacyStart + LEGACY_HEADING.length);
+          const nextHeadingMatch = afterLegacy.match(/\n## (?!#)/);
+          let legacyEnd: number;
+          if (nextHeadingMatch && nextHeadingMatch.index !== undefined) {
+            legacyEnd = legacyStart + LEGACY_HEADING.length + nextHeadingMatch.index;
+          } else {
+            legacyEnd = existing.length;
+          }
+
+          const before = existing.slice(0, legacyStart);
+          const after = existing.slice(legacyEnd);
+          const newContent = before + bridgeBlock + after;
+          await writeFile(claudeMd, newContent, "utf8");
+          console.log(`  ✓  CLAUDE.md (migrated PCL instructions to v${PCL_BRIDGE_VERSION})`);
+          created++;
+        } else {
+          console.log(`  ↷  CLAUDE.md legacy PCL section (kept as-is)`);
+          skipped++;
+        }
+      } else {
+        // File exists but no PCL section — prompt to append
+        const append = await promptYesNo("Add PCL instructions to CLAUDE.md?");
+        if (append) {
+          await writeFile(claudeMd, existing.trimEnd() + "\n\n" + bridgeBlock + "\n", "utf8");
+          console.log(`  ✓  CLAUDE.md (appended PCL instructions)`);
+          created++;
+        } else {
+          console.log(`  ↷  CLAUDE.md (skipped by user)`);
+          skipped++;
+        }
+      }
+    }
   }
 
   console.log(`\nDone! Created: ${created}, skipped: ${skipped}`);
@@ -475,6 +571,7 @@ Commands:
   status                  Show file counts and embedding coverage (reads --product-dir flag)
 
 Options:
+  --no-claude             Skip CLAUDE.md creation/update during init
   --help, -h              Show this help text
   --version, -v           Show version number
 
