@@ -55,21 +55,17 @@ You ask your agent: *"Build the checkout flow"*
 
 PCL is published as `@michaelgorski/pcl-mcp` on GitHub Packages.
 
-### 1. Configure npm for the GitHub registry
-
-Create or update `.npmrc` in your project root:
-
 ```
 @michaelgorski:registry=https://npm.pkg.github.com
 ```
 
-### 2. Install
+### 1. Install
 
 ```bash
 npm install @michaelgorski/pcl-mcp
 ```
 
-### 3. Scaffold the product folder
+### 2. Scaffold the product folder
 
 ```bash
 npx pcl init            # creates ./product with templates
