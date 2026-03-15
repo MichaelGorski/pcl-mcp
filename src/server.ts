@@ -24,7 +24,10 @@ import { handleTool, TOOL_SCHEMAS, renderFile, type ToolName } from "./tools.js"
 import type { FileType } from "./types.js";
 
 const require = createRequire(import.meta.url);
-const { version } = require("../package.json") as { version: string };
+const { version } = (() => {
+  try { return require("../package.json") as { version: string }; }
+  catch { return require("../../package.json") as { version: string }; }
+})();
 
 // ─── Resolve product dir ───────────────────────────────────────────────────────
 

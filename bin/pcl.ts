@@ -8,7 +8,10 @@ import { constants, existsSync } from "node:fs";
 import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
-const { version } = require("../package.json") as { version: string };
+const { version } = (() => {
+  try { return require("../package.json") as { version: string }; }
+  catch { return require("../../package.json") as { version: string }; }
+})();
 
 const cmd = process.argv[2];
 const args = process.argv.slice(3);
