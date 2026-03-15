@@ -1,5 +1,5 @@
 {
-  "name": "pcl-mcp",
+  "name": "@michaelgorski/pcl-mcp",
   "version": "0.1.4",
   "description": "Product Context Layer — MCP server for AI-assisted product development",
   "type": "module",
@@ -49,6 +49,9 @@
     "@types/node": "^22.0.0",
     "tsx": "^4.19.0",
     "typescript": "^5.8.0"
+  },
+  "publishConfig": {
+    "@michaelgorski:registry": "https://npm.pkg.github.com"
   },
   "engines": {
     "node": ">=22.0.0"
