@@ -1,0 +1,690 @@
+{
+  "tasks": [
+    {
+      "id": "task-01",
+      "category": "spec_compliance",
+      "description": "Implement the main dashboard page for TaskPilot. It should show the user's active projects, time tracking, and task overview. Write the React component code.",
+      "requiredContext": ["dashboard", "product", "sarah-pm"],
+      "forbiddenPatterns": [],
+      "requiredPatterns": ["progress", "time.*track", "overdue|deadline"],
+      "evaluationCriteria": [
+        {
+          "criterion": "Shows active projects with progress indicators",
+          "weight": 0.2,
+          "type": "llm_judge",
+          "prompt": "Does the code show a list/grid of active projects with some form of progress indicator (bar, percentage, status)?"
+        },
+        {
+          "criterion": "Displays time tracked today",
+          "weight": 0.2,
+          "type": "llm_judge",
+          "prompt": "Does the code include a prominent display of time tracked today?"
+        },
+        {
+          "criterion": "Highlights overdue tasks",
+          "weight": 0.2,
+          "type": "regex",
+          "pattern": "overdue|past.?due|deadline|expired|late"
+        },
+        {
+          "criterion": "Supports list and kanban views",
+          "weight": 0.2,
+          "type": "llm_judge",
+          "prompt": "Does the code support or reference both list and kanban/board view modes?"
+        },
+        {
+          "criterion": "Performance consideration (loading state)",
+          "weight": 0.2,
+          "type": "regex",
+          "pattern": "loading|skeleton|suspense|spinner"
+        }
+      ]
+    },
+    {
+      "id": "task-02",
+      "category": "spec_compliance",
+      "description": "Build the notification preferences page where users can configure how they receive notifications. Write the React component.",
+      "requiredContext": ["notifications", "dev-alex", "sarah-pm"],
+      "forbiddenPatterns": [],
+      "requiredPatterns": ["email|in.?app|push", "prefer|config|setting"],
+      "evaluationCriteria": [
+        {
+          "criterion": "Supports email, in-app, and push channels",
+          "weight": 0.25,
+          "type": "llm_judge",
+          "prompt": "Does the code provide configuration options for email, in-app, and push notification channels?"
+        },
+        {
+          "criterion": "Includes digest/batch mode option",
+          "weight": 0.25,
+          "type": "regex",
+          "pattern": "digest|batch|daily|weekly"
+        },
+        {
+          "criterion": "Per-channel toggle controls",
+          "weight": 0.25,
+          "type": "llm_judge",
+          "prompt": "Does the code have individual toggle/switch controls for each notification channel?"
+        },
+        {
+          "criterion": "Accessible form controls",
+          "weight": 0.25,
+          "type": "llm_judge",
+          "prompt": "Does the code use accessible form patterns (labels, aria attributes, or semantic HTML)?"
+        }
+      ]
+    },
+    {
+      "id": "task-03",
+      "category": "spec_compliance",
+      "description": "Create the project creation form that lets users set up a new project with name, timeline, tasks, and GitHub integration. Write the React component.",
+      "requiredContext": ["first-project", "dev-alex", "dashboard"],
+      "forbiddenPatterns": [],
+      "requiredPatterns": ["name|title", "timeline|date|deadline", "task", "github|repo"],
+      "evaluationCriteria": [
+        {
+          "criterion": "Includes project name input",
+          "weight": 0.2,
+          "type": "regex",
+          "pattern": "name|title"
+        },
+        {
+          "criterion": "Has timeline/date selection",
+          "weight": 0.2,
+          "type": "regex",
+          "pattern": "timeline|date|deadline|calendar"
+        },
+        {
+          "criterion": "Task creation capability",
+          "weight": 0.2,
+          "type": "regex",
+          "pattern": "task|todo|item"
+        },
+        {
+          "criterion": "GitHub integration option",
+          "weight": 0.2,
+          "type": "regex",
+          "pattern": "github|repo|repository"
+        },
+        {
+          "criterion": "Multi-step or organized form layout",
+          "weight": 0.2,
+          "type": "llm_judge",
+          "prompt": "Is the form organized into logical steps or sections rather than being one overwhelming form?"
+        }
+      ]
+    },
+    {
+      "id": "task-04",
+      "category": "spec_compliance",
+      "description": "Implement the email notification sending service. It should handle different notification types and respect user preferences. Write the TypeScript service code.",
+      "requiredContext": ["notifications", "data-governance"],
+      "forbiddenPatterns": [],
+      "requiredPatterns": ["email|send|notify", "prefer|config"],
+      "evaluationCriteria": [
+        {
+          "criterion": "Checks user preferences before sending",
+          "weight": 0.3,
+          "type": "llm_judge",
+          "prompt": "Does the code check user notification preferences before sending an email?"
+        },
+        {
+          "criterion": "Enforces daily email limit",
+          "weight": 0.3,
+          "type": "llm_judge",
+          "prompt": "Does the code enforce or check against a maximum daily email limit per user?"
+        },
+        {
+          "criterion": "Includes unsubscribe mechanism",
+          "weight": 0.2,
+          "type": "regex",
+          "pattern": "unsubscribe|opt.?out"
+        },
+        {
+          "criterion": "Supports batch/digest mode",
+          "weight": 0.2,
+          "type": "regex",
+          "pattern": "digest|batch|queue|aggregate"
+        }
+      ]
+    },
+    {
+      "id": "task-05",
+      "category": "business_rule",
+      "description": "Implement a discount coupon feature for TaskPilot. Users should be able to enter a coupon code at checkout to get a discount on their subscription. Write the TypeScript service code.",
+      "requiredContext": ["billing-rules", "product"],
+      "forbiddenPatterns": ["card.?number|credit.?card|cvv|store.*card"],
+      "requiredPatterns": ["stripe|payment.?gateway", "coupon|discount"],
+      "evaluationCriteria": [
+        {
+          "criterion": "Uses Stripe for payment processing (not local DB)",
+          "weight": 0.3,
+          "type": "regex",
+          "pattern": "stripe|payment.?gateway|payment.?provider"
+        },
+        {
+          "criterion": "Does not store card details locally",
+          "weight": 0.3,
+          "type": "llm_judge",
+          "prompt": "Does the code avoid storing credit card numbers, CVVs, or payment card details in a local database? It should delegate to Stripe."
+        },
+        {
+          "criterion": "Requires explicit user consent before charging",
+          "weight": 0.2,
+          "type": "llm_judge",
+          "prompt": "Does the code require explicit user confirmation/consent before processing a payment?"
+        },
+        {
+          "criterion": "Validates coupon before applying",
+          "weight": 0.2,
+          "type": "regex",
+          "pattern": "valid|verify|check|expire"
+        }
+      ]
+    },
+    {
+      "id": "task-06",
+      "category": "business_rule",
+      "description": "Implement the plan downgrade flow. Users on a paid plan should be able to downgrade to a lower tier or free plan. Write the TypeScript service code.",
+      "requiredContext": ["billing-rules", "product", "data-governance"],
+      "forbiddenPatterns": ["immediate.*cancel|instant.*downgrade"],
+      "requiredPatterns": ["billing.?period|end.?of|cycle"],
+      "evaluationCriteria": [
+        {
+          "criterion": "Downgrade takes effect at end of billing period",
+          "weight": 0.4,
+          "type": "llm_judge",
+          "prompt": "Does the code schedule the downgrade to take effect at the end of the current billing period, rather than immediately?"
+        },
+        {
+          "criterion": "Handles free tier project limit (max 3)",
+          "weight": 0.3,
+          "type": "llm_judge",
+          "prompt": "If downgrading to free tier, does the code handle the fact that free users can only have 3 projects?"
+        },
+        {
+          "criterion": "Uses Stripe for subscription management",
+          "weight": 0.3,
+          "type": "regex",
+          "pattern": "stripe|subscription|billing"
+        }
+      ]
+    },
+    {
+      "id": "task-07",
+      "category": "business_rule",
+      "description": "Implement account deletion functionality. A user requests to delete their account. Write the TypeScript service that handles the full deletion flow.",
+      "requiredContext": ["data-governance", "billing-rules"],
+      "forbiddenPatterns": ["DELETE.*FROM.*users|DROP|hard.?delete|remove.*permanently"],
+      "requiredPatterns": ["anonym|soft.?delete|deactivat|redact|mark.*deleted|flag.*deleted|status.*deleted"],
+      "evaluationCriteria": [
+        {
+          "criterion": "Anonymizes data instead of hard deleting",
+          "weight": 0.4,
+          "type": "llm_judge",
+          "prompt": "Does the code anonymize user data (replace PII with anonymous values) rather than hard-deleting rows from the database?"
+        },
+        {
+          "criterion": "Retains aggregated analytics",
+          "weight": 0.2,
+          "type": "llm_judge",
+          "prompt": "Does the code preserve aggregated/anonymized analytics data even after account deletion?"
+        },
+        {
+          "criterion": "Cancels any active billing subscription",
+          "weight": 0.2,
+          "type": "regex",
+          "pattern": "cancel.*subscription|subscription.*cancel|stripe"
+        },
+        {
+          "criterion": "Handles data export before deletion",
+          "weight": 0.2,
+          "type": "llm_judge",
+          "prompt": "Does the code offer or check for a data export before processing the deletion?"
+        }
+      ]
+    },
+    {
+      "id": "task-08",
+      "category": "business_rule",
+      "description": "Implement the refund processing service. Support processing refunds for users who request them within the allowed window. Write the TypeScript service code.",
+      "requiredContext": ["billing-rules"],
+      "forbiddenPatterns": [],
+      "requiredPatterns": ["refund", "48.*hour|2.*day|window|deadline"],
+      "evaluationCriteria": [
+        {
+          "criterion": "Processes refunds within 48-hour window",
+          "weight": 0.4,
+          "type": "llm_judge",
+          "prompt": "Does the code enforce or reference a 48-hour processing window for refunds?"
+        },
+        {
+          "criterion": "Uses Stripe for refund processing",
+          "weight": 0.3,
+          "type": "regex",
+          "pattern": "stripe|refund.*api|payment.*provider"
+        },
+        {
+          "criterion": "Validates refund eligibility",
+          "weight": 0.3,
+          "type": "llm_judge",
+          "prompt": "Does the code validate that the refund request is eligible before processing?"
+        }
+      ]
+    },
+    {
+      "id": "task-09",
+      "category": "persona_alignment",
+      "description": "Build the global settings page for TaskPilot. It should let users configure their profile, workspace preferences, notification settings, and developer integrations. The page must be accessible to both technical users (keyboard shortcuts, API tokens) and non-technical users (simple toggles, mobile-friendly layout). Write the React component.",
+      "requiredContext": ["dev-alex", "sarah-pm", "notifications"],
+      "forbiddenPatterns": [],
+      "requiredPatterns": ["setting|preference|config"],
+      "evaluationCriteria": [
+        {
+          "criterion": "Includes keyboard shortcut preferences (Alex's need)",
+          "weight": 0.25,
+          "type": "regex",
+          "pattern": "keyboard|shortcut|hotkey|keybind"
+        },
+        {
+          "criterion": "Mobile-friendly layout (Sarah's need)",
+          "weight": 0.25,
+          "type": "llm_judge",
+          "prompt": "Does the code use responsive design patterns that would work well on mobile devices?"
+        },
+        {
+          "criterion": "Organized into logical sections",
+          "weight": 0.25,
+          "type": "llm_judge",
+          "prompt": "Are settings organized into clear categories (profile, workspace, notifications, integrations) rather than one long list?"
+        },
+        {
+          "criterion": "Integration settings (GitHub, etc.)",
+          "weight": 0.25,
+          "type": "regex",
+          "pattern": "integrat|github|connect|oauth"
+        }
+      ]
+    },
+    {
+      "id": "task-10",
+      "category": "persona_alignment",
+      "description": "Design and implement the onboarding wizard for new TaskPilot users. The wizard should guide them through initial setup with a multi-step flow that shows clear progress. Each step must be completable in under 2 minutes, and optional steps should be skippable. Write the React component.",
+      "requiredContext": ["onboarding", "sarah-pm", "dev-alex"],
+      "forbiddenPatterns": [],
+      "requiredPatterns": ["step|wizard|progress"],
+      "evaluationCriteria": [
+        {
+          "criterion": "Multi-step wizard (not a single long form)",
+          "weight": 0.25,
+          "type": "llm_judge",
+          "prompt": "Is the onboarding implemented as a multi-step wizard with clear progression, not a single long form?"
+        },
+        {
+          "criterion": "Each step is quick (respects anti-pattern: no forms > 2 min)",
+          "weight": 0.25,
+          "type": "llm_judge",
+          "prompt": "Are individual wizard steps kept short and focused, with minimal required fields per step?"
+        },
+        {
+          "criterion": "Shows progress indicator",
+          "weight": 0.25,
+          "type": "regex",
+          "pattern": "progress|step.*\\d|stepper|indicator"
+        },
+        {
+          "criterion": "Allows skipping optional steps",
+          "weight": 0.25,
+          "type": "regex",
+          "pattern": "skip|optional|later"
+        }
+      ]
+    },
+    {
+      "id": "task-11",
+      "category": "persona_alignment",
+      "description": "Build a help/documentation page for TaskPilot that assists users in learning the product. Write the React component.",
+      "requiredContext": ["dev-alex", "sarah-pm", "product"],
+      "forbiddenPatterns": [],
+      "requiredPatterns": ["help|doc|guide|support"],
+      "evaluationCriteria": [
+        {
+          "criterion": "Includes code examples for developers (Alex)",
+          "weight": 0.3,
+          "type": "llm_judge",
+          "prompt": "Does the help page include or reference code examples, API documentation, or developer-oriented content?"
+        },
+        {
+          "criterion": "Has searchable content",
+          "weight": 0.3,
+          "type": "regex",
+          "pattern": "search|filter|query|find"
+        },
+        {
+          "criterion": "Categorized help topics",
+          "weight": 0.2,
+          "type": "llm_judge",
+          "prompt": "Are help topics organized into categories that serve both technical (developer) and non-technical (PM) users?"
+        },
+        {
+          "criterion": "Quick-start or getting-started section",
+          "weight": 0.2,
+          "type": "regex",
+          "pattern": "quick.?start|getting.?started|tutorial|guide"
+        }
+      ]
+    },
+    {
+      "id": "task-12",
+      "category": "architecture",
+      "description": "Add a new API endpoint for project analytics that returns time tracking summaries and task completion rates. Write the Next.js API route handler.",
+      "requiredContext": ["adr-001-nextjs", "dashboard", "product"],
+      "forbiddenPatterns": ["pages/api|getServerSideProps"],
+      "requiredPatterns": ["app/|route|server"],
+      "evaluationCriteria": [
+        {
+          "criterion": "Uses Next.js App Router pattern (not Pages Router)",
+          "weight": 0.3,
+          "type": "llm_judge",
+          "prompt": "Does the code use Next.js App Router patterns (route.ts in app/ directory) rather than Pages Router (pages/api/)?"
+        },
+        {
+          "criterion": "Uses server-side data fetching",
+          "weight": 0.3,
+          "type": "llm_judge",
+          "prompt": "Does the code use server components or server actions for data fetching rather than client-side fetch calls?"
+        },
+        {
+          "criterion": "Connects to Supabase",
+          "weight": 0.2,
+          "type": "regex",
+          "pattern": "supabase|createClient|from\\("
+        },
+        {
+          "criterion": "Includes proper error handling",
+          "weight": 0.2,
+          "type": "regex",
+          "pattern": "try|catch|error|Response.*\\d{3}|NextResponse"
+        }
+      ]
+    },
+    {
+      "id": "task-13",
+      "category": "architecture",
+      "description": "Implement a new database migration that adds a 'comments' table for project task comments. Include Row Level Security policies. Write the SQL migration.",
+      "requiredContext": ["adr-001-nextjs", "data-governance"],
+      "forbiddenPatterns": [],
+      "requiredPatterns": ["CREATE TABLE|create table", "RLS|row.?level|policy|POLICY"],
+      "evaluationCriteria": [
+        {
+          "criterion": "Creates comments table with proper schema",
+          "weight": 0.25,
+          "type": "regex",
+          "pattern": "CREATE TABLE.*comment"
+        },
+        {
+          "criterion": "Includes RLS policies",
+          "weight": 0.25,
+          "type": "regex",
+          "pattern": "CREATE POLICY|ALTER TABLE.*ENABLE ROW LEVEL|enable_rls"
+        },
+        {
+          "criterion": "Uses Supabase auth for RLS (auth.uid())",
+          "weight": 0.25,
+          "type": "regex",
+          "pattern": "auth\\.uid|auth\\.jwt|current_user"
+        },
+        {
+          "criterion": "Includes proper foreign keys",
+          "weight": 0.25,
+          "type": "regex",
+          "pattern": "REFERENCES|FOREIGN KEY|foreign key"
+        }
+      ]
+    },
+    {
+      "id": "task-14",
+      "category": "architecture",
+      "description": "Add Supabase authentication to a new protected route that shows billing information. Write the Next.js middleware and page component.",
+      "requiredContext": ["adr-001-nextjs", "billing-rules"],
+      "forbiddenPatterns": ["localStorage.*token|cookie.*set.*jwt"],
+      "requiredPatterns": ["supabase|auth|session|middleware"],
+      "evaluationCriteria": [
+        {
+          "criterion": "Uses Supabase Auth (not custom JWT)",
+          "weight": 0.3,
+          "type": "regex",
+          "pattern": "supabase.*auth|createServerClient|getSession"
+        },
+        {
+          "criterion": "Server-side session validation",
+          "weight": 0.3,
+          "type": "llm_judge",
+          "prompt": "Does the code validate the auth session on the server side (middleware or server component) rather than only on the client?"
+        },
+        {
+          "criterion": "Redirects unauthenticated users",
+          "weight": 0.2,
+          "type": "regex",
+          "pattern": "redirect|login|unauthorized|401"
+        },
+        {
+          "criterion": "Uses server components by default",
+          "weight": 0.2,
+          "type": "llm_judge",
+          "prompt": "Does the code use Next.js server components (no 'use client' directive) for data fetching, with client components only where needed for interactivity?"
+        }
+      ]
+    },
+    {
+      "id": "task-15",
+      "category": "journey_correctness",
+      "description": "Implement the complete onboarding flow for TaskPilot. When a new user clicks 'Get started free', they should go through signup, email verification, workspace creation, team invite, and first project creation. Write the React components for the full flow.",
+      "requiredContext": ["onboarding", "sarah-pm", "product"],
+      "forbiddenPatterns": [],
+      "requiredPatterns": ["signup|register", "verif|email", "workspace|team", "project"],
+      "evaluationCriteria": [
+        {
+          "criterion": "Includes signup/registration step",
+          "weight": 0.2,
+          "type": "regex",
+          "pattern": "signup|sign.?up|register"
+        },
+        {
+          "criterion": "Includes email verification step",
+          "weight": 0.2,
+          "type": "regex",
+          "pattern": "verif|confirm.*email"
+        },
+        {
+          "criterion": "Includes workspace creation",
+          "weight": 0.2,
+          "type": "regex",
+          "pattern": "workspace|organization|team"
+        },
+        {
+          "criterion": "Includes team invite step",
+          "weight": 0.2,
+          "type": "regex",
+          "pattern": "invite|team|collaborat"
+        },
+        {
+          "criterion": "Includes first project creation",
+          "weight": 0.2,
+          "type": "regex",
+          "pattern": "project|first.?project|create.*project"
+        }
+      ]
+    },
+    {
+      "id": "task-16",
+      "category": "journey_correctness",
+      "description": "Build the email verification page. After signup, users receive a verification email and land on this page. It should show verification status, allow resending, and auto-redirect on success. Write the React component.",
+      "requiredContext": ["onboarding", "adr-001-nextjs"],
+      "forbiddenPatterns": [],
+      "requiredPatterns": ["verif|confirm", "resend", "redirect|navigate"],
+      "evaluationCriteria": [
+        {
+          "criterion": "Shows verification status",
+          "weight": 0.25,
+          "type": "llm_judge",
+          "prompt": "Does the component display the current verification status (pending, verified, failed)?"
+        },
+        {
+          "criterion": "Provides resend email option",
+          "weight": 0.25,
+          "type": "regex",
+          "pattern": "resend|re.?send|send.*again"
+        },
+        {
+          "criterion": "Auto-redirects after verification",
+          "weight": 0.25,
+          "type": "regex",
+          "pattern": "redirect|navigate|router\\.push|replace"
+        },
+        {
+          "criterion": "Handles error states gracefully",
+          "weight": 0.25,
+          "type": "regex",
+          "pattern": "error|fail|invalid|expired"
+        }
+      ]
+    },
+    {
+      "id": "task-17",
+      "category": "journey_correctness",
+      "description": "Implement the first project creation wizard for Alex (developer persona). After onboarding, Alex creates their first project by naming it, setting a timeline, adding tasks, connecting GitHub, and inviting a collaborator. Write the React component.",
+      "requiredContext": ["first-project", "dev-alex"],
+      "forbiddenPatterns": [],
+      "requiredPatterns": ["name|title", "timeline|date", "task", "github", "invite|collaborat"],
+      "evaluationCriteria": [
+        {
+          "criterion": "Follows the 5-step journey order",
+          "weight": 0.3,
+          "type": "llm_judge",
+          "prompt": "Does the wizard follow the steps: name project -> set timeline -> add tasks -> connect GitHub -> invite collaborator, in roughly this order?"
+        },
+        {
+          "criterion": "GitHub repo connection step",
+          "weight": 0.2,
+          "type": "regex",
+          "pattern": "github|repository|repo|connect"
+        },
+        {
+          "criterion": "Keyboard-friendly (Alex's preference)",
+          "weight": 0.2,
+          "type": "llm_judge",
+          "prompt": "Does the code include keyboard navigation support (tab order, enter to submit, keyboard shortcuts, or autofocus)?"
+        },
+        {
+          "criterion": "Quick completion design (minimal required fields)",
+          "weight": 0.3,
+          "type": "llm_judge",
+          "prompt": "Are most fields optional with sensible defaults, allowing Alex to quickly create a project without filling everything?"
+        }
+      ]
+    },
+    {
+      "id": "task-18",
+      "category": "business_rule",
+      "description": "Implement the trial period management service. Handle trial start, expiration checks, and conversion to paid plans. Write the TypeScript service code.",
+      "requiredContext": ["billing-rules", "product"],
+      "forbiddenPatterns": ["extend.*trial|trial.*extend"],
+      "requiredPatterns": ["14.*day|trial|expir"],
+      "evaluationCriteria": [
+        {
+          "criterion": "Trial period is exactly 14 days",
+          "weight": 0.3,
+          "type": "regex",
+          "pattern": "14|fourteen"
+        },
+        {
+          "criterion": "No trial extensions without approval",
+          "weight": 0.3,
+          "type": "llm_judge",
+          "prompt": "Does the code prevent automatic trial extensions? Extensions should require special approval (VP level or admin override)."
+        },
+        {
+          "criterion": "Handles trial expiration gracefully",
+          "weight": 0.2,
+          "type": "llm_judge",
+          "prompt": "Does the code handle trial expiration by limiting features or prompting upgrade rather than deleting data?"
+        },
+        {
+          "criterion": "Integrates with Stripe for conversion",
+          "weight": 0.2,
+          "type": "regex",
+          "pattern": "stripe|subscription|checkout"
+        }
+      ]
+    },
+    {
+      "id": "task-19",
+      "category": "architecture",
+      "description": "Implement a webhook handler for receiving GitHub events (push, PR created, issue opened) and linking them to TaskPilot projects. Write the Next.js API route.",
+      "requiredContext": ["adr-001-nextjs", "first-project", "product"],
+      "forbiddenPatterns": ["pages/api"],
+      "requiredPatterns": ["webhook|github|event", "app/|route"],
+      "evaluationCriteria": [
+        {
+          "criterion": "Uses App Router API route pattern",
+          "weight": 0.25,
+          "type": "llm_judge",
+          "prompt": "Does the code use the Next.js App Router pattern (route.ts in app/ directory) for the webhook endpoint?"
+        },
+        {
+          "criterion": "Verifies webhook signature",
+          "weight": 0.25,
+          "type": "regex",
+          "pattern": "signature|verify|hmac|secret|x-hub-signature"
+        },
+        {
+          "criterion": "Handles multiple event types",
+          "weight": 0.25,
+          "type": "regex",
+          "pattern": "push|pull.?request|issue|event.?type|x-github-event"
+        },
+        {
+          "criterion": "Proper error responses",
+          "weight": 0.25,
+          "type": "regex",
+          "pattern": "400|401|500|NextResponse|Response"
+        }
+      ]
+    },
+    {
+      "id": "task-20",
+      "category": "journey_correctness",
+      "description": "Build the workspace creation step of the onboarding flow. After email verification, users create their workspace by choosing a name, inviting team members, and selecting a plan. Write the React component.",
+      "requiredContext": ["onboarding", "billing-rules", "sarah-pm"],
+      "forbiddenPatterns": [],
+      "requiredPatterns": ["workspace|team|organization", "invite|member", "plan|tier|pricing"],
+      "evaluationCriteria": [
+        {
+          "criterion": "Workspace naming with validation",
+          "weight": 0.25,
+          "type": "regex",
+          "pattern": "workspace|organization|team.*name"
+        },
+        {
+          "criterion": "Team member invitation",
+          "weight": 0.25,
+          "type": "regex",
+          "pattern": "invite|email.*member|add.*member"
+        },
+        {
+          "criterion": "Plan selection including free tier",
+          "weight": 0.25,
+          "type": "llm_judge",
+          "prompt": "Does the component include plan/tier selection that shows a free option alongside paid plans?"
+        },
+        {
+          "criterion": "Matches onboarding journey step order",
+          "weight": 0.25,
+          "type": "llm_judge",
+          "prompt": "Does this component fit as step 3 in the onboarding flow (after signup and email verification)?"
+        }
+      ]
+    }
+  ]
+}

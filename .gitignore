@@ -3,3 +3,5 @@ dist/
 *.db
 .DS_Store
 .npmrc
+.env
+.env.local

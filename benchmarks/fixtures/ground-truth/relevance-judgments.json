@@ -1,0 +1,284 @@
+{
+  "queries": [
+    {
+      "query": "billing rules for plan downgrades",
+      "queryType": "exact_term",
+      "judgments": [
+        { "docId": "billing-rules", "relevance": 3 },
+        { "docId": "data-governance", "relevance": 0 },
+        { "docId": "notifications", "relevance": 0 }
+      ]
+    },
+    {
+      "query": "how does the onboarding flow work",
+      "queryType": "exact_term",
+      "judgments": [
+        { "docId": "onboarding", "relevance": 3 },
+        { "docId": "first-project", "relevance": 1 },
+        { "docId": "sarah-pm", "relevance": 1 },
+        { "docId": "dashboard", "relevance": 0 }
+      ]
+    },
+    {
+      "query": "notification email preferences",
+      "queryType": "exact_term",
+      "judgments": [
+        { "docId": "notifications", "relevance": 3 },
+        { "docId": "data-governance", "relevance": 0 },
+        { "docId": "sarah-pm", "relevance": 0 }
+      ]
+    },
+    {
+      "query": "what tech stack does the project use",
+      "queryType": "exact_term",
+      "judgments": [
+        { "docId": "product", "relevance": 3 },
+        { "docId": "adr-001-nextjs", "relevance": 3 },
+        { "docId": "dashboard", "relevance": 0 }
+      ]
+    },
+    {
+      "query": "Stripe payment processing",
+      "queryType": "exact_term",
+      "judgments": [
+        { "docId": "billing-rules", "relevance": 3 },
+        { "docId": "adr-001-nextjs", "relevance": 0 },
+        { "docId": "data-governance", "relevance": 1 }
+      ]
+    },
+    {
+      "query": "session token expiry rules",
+      "queryType": "exact_term",
+      "judgments": [
+        { "docId": "data-governance", "relevance": 3 },
+        { "docId": "adr-001-nextjs", "relevance": 1 },
+        { "docId": "billing-rules", "relevance": 0 }
+      ]
+    },
+    {
+      "query": "dashboard acceptance criteria",
+      "queryType": "exact_term",
+      "judgments": [
+        { "docId": "dashboard", "relevance": 3 },
+        { "docId": "notifications", "relevance": 0 },
+        { "docId": "sarah-pm", "relevance": 1 }
+      ]
+    },
+    {
+      "query": "what frustrates freelancers about project tools",
+      "queryType": "conceptual",
+      "judgments": [
+        { "docId": "dev-alex", "relevance": 3 },
+        { "docId": "sarah-pm", "relevance": 2 },
+        { "docId": "product", "relevance": 2 },
+        { "docId": "onboarding", "relevance": 1 }
+      ]
+    },
+    {
+      "query": "how should the app handle user privacy",
+      "queryType": "conceptual",
+      "judgments": [
+        { "docId": "data-governance", "relevance": 3 },
+        { "docId": "billing-rules", "relevance": 1 },
+        { "docId": "notifications", "relevance": 1 }
+      ]
+    },
+    {
+      "query": "what makes a good user experience for time tracking",
+      "queryType": "conceptual",
+      "judgments": [
+        { "docId": "dev-alex", "relevance": 3 },
+        { "docId": "sarah-pm", "relevance": 2 },
+        { "docId": "dashboard", "relevance": 2 },
+        { "docId": "product", "relevance": 1 }
+      ]
+    },
+    {
+      "query": "security and compliance requirements",
+      "queryType": "conceptual",
+      "judgments": [
+        { "docId": "data-governance", "relevance": 3 },
+        { "docId": "billing-rules", "relevance": 2 },
+        { "docId": "adr-001-nextjs", "relevance": 1 }
+      ]
+    },
+    {
+      "query": "what should new users see first",
+      "queryType": "conceptual",
+      "judgments": [
+        { "docId": "onboarding", "relevance": 3 },
+        { "docId": "dashboard", "relevance": 2 },
+        { "docId": "first-project", "relevance": 2 },
+        { "docId": "sarah-pm", "relevance": 1 }
+      ]
+    },
+    {
+      "query": "mobile-friendly design considerations",
+      "queryType": "conceptual",
+      "judgments": [
+        { "docId": "sarah-pm", "relevance": 2 },
+        { "docId": "dev-alex", "relevance": 1 },
+        { "docId": "dashboard", "relevance": 2 },
+        { "docId": "product", "relevance": 1 }
+      ]
+    },
+    {
+      "query": "how to avoid overwhelming users with notifications",
+      "queryType": "conceptual",
+      "judgments": [
+        { "docId": "notifications", "relevance": 3 },
+        { "docId": "sarah-pm", "relevance": 2 },
+        { "docId": "dev-alex", "relevance": 2 }
+      ]
+    },
+    {
+      "query": "why did we choose Next.js over other frameworks",
+      "queryType": "exact_term",
+      "judgments": [
+        { "docId": "adr-001-nextjs", "relevance": 3 },
+        { "docId": "product", "relevance": 1 },
+        { "docId": "dashboard", "relevance": 0 }
+      ]
+    },
+    {
+      "query": "which persona prefers keyboard shortcuts",
+      "queryType": "multi_hop",
+      "judgments": [
+        { "docId": "dev-alex", "relevance": 3 },
+        { "docId": "sarah-pm", "relevance": 0 },
+        { "docId": "dashboard", "relevance": 1 }
+      ]
+    },
+    {
+      "query": "what architecture decisions affect the onboarding flow",
+      "queryType": "multi_hop",
+      "judgments": [
+        { "docId": "adr-001-nextjs", "relevance": 2 },
+        { "docId": "onboarding", "relevance": 3 },
+        { "docId": "product", "relevance": 1 }
+      ]
+    },
+    {
+      "query": "which billing rules affect the first-time user experience",
+      "queryType": "multi_hop",
+      "judgments": [
+        { "docId": "billing-rules", "relevance": 3 },
+        { "docId": "onboarding", "relevance": 2 },
+        { "docId": "first-project", "relevance": 2 },
+        { "docId": "product", "relevance": 1 }
+      ]
+    },
+    {
+      "query": "how does data governance impact the notification system",
+      "queryType": "multi_hop",
+      "judgments": [
+        { "docId": "data-governance", "relevance": 3 },
+        { "docId": "notifications", "relevance": 3 },
+        { "docId": "billing-rules", "relevance": 0 }
+      ]
+    },
+    {
+      "query": "what acceptance criteria apply to alex's workflow",
+      "queryType": "multi_hop",
+      "judgments": [
+        { "docId": "dev-alex", "relevance": 3 },
+        { "docId": "dashboard", "relevance": 2 },
+        { "docId": "first-project", "relevance": 2 },
+        { "docId": "notifications", "relevance": 1 }
+      ]
+    },
+    {
+      "query": "Supabase row level security policies",
+      "queryType": "exact_term",
+      "judgments": [
+        { "docId": "adr-001-nextjs", "relevance": 3 },
+        { "docId": "data-governance", "relevance": 2 },
+        { "docId": "billing-rules", "relevance": 0 }
+      ]
+    },
+    {
+      "query": "project creation flow steps",
+      "queryType": "exact_term",
+      "judgments": [
+        { "docId": "first-project", "relevance": 3 },
+        { "docId": "onboarding", "relevance": 2 },
+        { "docId": "dashboard", "relevance": 1 }
+      ]
+    },
+    {
+      "query": "free tier limitations and upgrade path",
+      "queryType": "multi_hop",
+      "judgments": [
+        { "docId": "billing-rules", "relevance": 3 },
+        { "docId": "product", "relevance": 2 },
+        { "docId": "onboarding", "relevance": 1 }
+      ]
+    },
+    {
+      "query": "Sarah managing multiple client projects",
+      "queryType": "conceptual",
+      "judgments": [
+        { "docId": "sarah-pm", "relevance": 3 },
+        { "docId": "dashboard", "relevance": 2 },
+        { "docId": "product", "relevance": 1 },
+        { "docId": "first-project", "relevance": 1 }
+      ]
+    },
+    {
+      "query": "API rate limiting and data export",
+      "queryType": "exact_term",
+      "judgments": [
+        { "docId": "data-governance", "relevance": 3 },
+        { "docId": "adr-001-nextjs", "relevance": 0 },
+        { "docId": "billing-rules", "relevance": 0 }
+      ]
+    },
+    {
+      "query": "real-time collaboration features",
+      "queryType": "conceptual",
+      "judgments": [
+        { "docId": "adr-001-nextjs", "relevance": 2 },
+        { "docId": "product", "relevance": 2 },
+        { "docId": "dashboard", "relevance": 1 },
+        { "docId": "notifications", "relevance": 1 }
+      ]
+    },
+    {
+      "query": "kanban board view specification",
+      "queryType": "exact_term",
+      "judgments": [
+        { "docId": "dashboard", "relevance": 3 },
+        { "docId": "sarah-pm", "relevance": 1 },
+        { "docId": "product", "relevance": 0 }
+      ]
+    },
+    {
+      "query": "account deletion and data retention policy",
+      "queryType": "exact_term",
+      "judgments": [
+        { "docId": "data-governance", "relevance": 3 },
+        { "docId": "billing-rules", "relevance": 1 },
+        { "docId": "notifications", "relevance": 0 }
+      ]
+    },
+    {
+      "query": "what should we consider when building the settings page for Alex",
+      "queryType": "multi_hop",
+      "judgments": [
+        { "docId": "dev-alex", "relevance": 3 },
+        { "docId": "notifications", "relevance": 2 },
+        { "docId": "data-governance", "relevance": 1 },
+        { "docId": "dashboard", "relevance": 1 }
+      ]
+    },
+    {
+      "query": "email sending limits and unsubscribe requirements",
+      "queryType": "exact_term",
+      "judgments": [
+        { "docId": "notifications", "relevance": 3 },
+        { "docId": "data-governance", "relevance": 1 },
+        { "docId": "billing-rules", "relevance": 0 }
+      ]
+    }
+  ]
+}

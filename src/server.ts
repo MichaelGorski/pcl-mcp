@@ -164,6 +164,15 @@ async function main() {
         parts.push("# Product Summary\n\nNo product.md found. Run `pcl init` to scaffold the product folder.");
       }
 
+      // Always include personas — agents need to know WHO they're building for
+      const personas = listByType(db, "persona");
+      if (personas.length > 0) {
+        const personaSummaries = personas.map(p =>
+          `• **${p.id}** — ${p.title}: ${p.summary.slice(0, 150)}`
+        ).join("\n");
+        parts.push("\n\n---\n\n# Personas\n\n" + personaSummaries);
+      }
+
       const critical = getCritical(db);
       if (critical.length > 0) {
         parts.push("\n\n---\n\n# Critical Domain Rules\n\n" + critical.map(renderFile).join("\n\n---\n\n"));

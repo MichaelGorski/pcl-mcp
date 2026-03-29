@@ -18,7 +18,16 @@
     "dev": "tsx watch src/server.ts",
     "serve": "node dist/src/server.js",
     "init": "tsx bin/pcl.ts init",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
+    "bench": "vitest bench --config benchmarks/vitest.config.bench.ts --run",
+    "bench:perf": "vitest bench --config benchmarks/vitest.config.bench.ts --run benchmarks/runners/bench-performance.bench.ts",
+    "bench:quality": "tsx benchmarks/runners/bench-search-quality.ts",
+    "bench:tokens": "tsx benchmarks/runners/bench-token-efficiency.ts",
+    "bench:ablation": "tsx benchmarks/runners/bench-ablation.ts",
+    "bench:ai": "tsx benchmarks/runners/bench-ai-quality.ts",
+    "bench:report": "tsx benchmarks/reporters/markdown-reporter.ts",
     "prepare": "tsc",
     "publish:npm": "npm publish --registry https://registry.npmjs.org",
     "publish:github": "npm pkg set name='@michaelgorski/pcl-mcp' && npm publish --registry https://npm.pkg.github.com && npm pkg set name='pcl-mcp'"
@@ -47,10 +56,13 @@
     "zod": "^3.24.0"
   },
   "devDependencies": {
+    "@anthropic-ai/sdk": "^0.80.0",
     "@types/better-sqlite3": "^7.6.12",
     "@types/node": "^22.0.0",
+    "tiktoken": "^1.0.22",
     "tsx": "^4.19.0",
-    "typescript": "^5.8.0"
+    "typescript": "^5.8.0",
+    "vitest": "^4.1.1"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org",

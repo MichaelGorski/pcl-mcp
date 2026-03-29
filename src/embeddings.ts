@@ -11,8 +11,8 @@
 
 import type { FeatureExtractionPipeline } from "@huggingface/transformers";
 
-const MODEL_ID = "Xenova/all-MiniLM-L6-v2";
-const DIMS = 384;
+const MODEL_ID = "Xenova/all-mpnet-base-v2";
+const DIMS = 768;
 
 let _pipeline: FeatureExtractionPipeline | null = null;
 let _initPromise: Promise<FeatureExtractionPipeline> | null = null;

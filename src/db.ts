@@ -11,7 +11,7 @@ import type { FileType, IndexedFile } from "./types.js";
 
 // ─── Schema ───────────────────────────────────────────────────────────────────
 
-const SCHEMA_VERSION = 2;
+const SCHEMA_VERSION = 3;
 
 const SCHEMA = `
 PRAGMA journal_mode = WAL;
@@ -30,7 +30,8 @@ CREATE TABLE IF NOT EXISTS files (
   critical    INTEGER NOT NULL DEFAULT 0,
   mtime       INTEGER NOT NULL,
   hash        TEXT NOT NULL,
-  embedding   BLOB,            -- packed float32 array, nullable until embedded
+  embedding       BLOB,            -- packed float32 array (body), nullable until embedded
+  embedding_title BLOB,            -- packed float32 array (title), nullable until embedded
   UNIQUE(id, type)
 );
 
@@ -127,22 +128,23 @@ function prepareStatements(db: Database.Database) {
       "DELETE FROM files WHERE id = @id AND type = @type AND path != @path"
     ),
     upsert: db.prepare(`
-      INSERT INTO files (id, type, path, frontmatter, body, full_text, title, summary, critical, mtime, hash, embedding)
-      VALUES (@id, @type, @path, @frontmatter, @body, @full_text, @title, @summary, @critical, @mtime, @hash, @embedding)
+      INSERT INTO files (id, type, path, frontmatter, body, full_text, title, summary, critical, mtime, hash, embedding, embedding_title)
+      VALUES (@id, @type, @path, @frontmatter, @body, @full_text, @title, @summary, @critical, @mtime, @hash, @embedding, @embedding_title)
       ON CONFLICT(path) DO UPDATE SET
-        id          = excluded.id,
-        type        = excluded.type,
-        frontmatter = excluded.frontmatter,
-        body        = excluded.body,
-        full_text   = excluded.full_text,
-        title       = excluded.title,
-        summary     = excluded.summary,
-        critical    = excluded.critical,
-        mtime       = excluded.mtime,
-        hash        = excluded.hash,
-        embedding   = excluded.embedding
+        id              = excluded.id,
+        type            = excluded.type,
+        frontmatter     = excluded.frontmatter,
+        body            = excluded.body,
+        full_text       = excluded.full_text,
+        title           = excluded.title,
+        summary         = excluded.summary,
+        critical        = excluded.critical,
+        mtime           = excluded.mtime,
+        hash            = excluded.hash,
+        embedding       = excluded.embedding,
+        embedding_title = excluded.embedding_title
     `),
-    updateEmbedding: db.prepare("UPDATE files SET embedding = ? WHERE path = ?"),
+    updateEmbedding: db.prepare("UPDATE files SET embedding = ?, embedding_title = ? WHERE path = ?"),
     deleteFile: db.prepare("DELETE FROM files WHERE path = ?"),
     getByPath: db.prepare("SELECT * FROM files WHERE path = ?"),
     getById: db.prepare("SELECT * FROM files WHERE type = ? AND id = ?"),
@@ -151,7 +153,7 @@ function prepareStatements(db: Database.Database) {
     getCritical: db.prepare("SELECT * FROM files WHERE critical = 1"),
     getAllWithEmbeddings: db.prepare("SELECT * FROM files WHERE embedding IS NOT NULL"),
     getAllWithoutEmbeddings: db.prepare("SELECT * FROM files WHERE embedding IS NULL"),
-    ftsSearch: db.prepare("SELECT id, type, rank FROM fts WHERE fts MATCH ? ORDER BY rank LIMIT ?"),
+    ftsSearch: db.prepare("SELECT id, type, bm25(fts, 0, 0, 10.0, 1.0) as rank FROM fts WHERE fts MATCH ? ORDER BY rank LIMIT ?"),
   };
 }
 
@@ -183,22 +185,24 @@ export interface DBRow {
   mtime: number;
   hash: string;
   embedding: Buffer | null;
+  embedding_title: Buffer | null;
 }
 
 function toIndexedFile(row: DBRow): IndexedFile {
   return {
-    id:          row.id,
-    type:        row.type as FileType,
-    path:        row.path,
-    frontmatter: JSON.parse(row.frontmatter),
-    body:        row.body,
-    fullText:    row.full_text,
-    title:       row.title,
-    summary:     row.summary,
-    critical:    row.critical === 1,
-    mtime:       row.mtime,
-    hash:        row.hash,
-    embedding:   row.embedding ? unpackEmbedding(row.embedding) : [],
+    id:             row.id,
+    type:           row.type as FileType,
+    path:           row.path,
+    frontmatter:    JSON.parse(row.frontmatter),
+    body:           row.body,
+    fullText:       row.full_text,
+    title:          row.title,
+    summary:        row.summary,
+    critical:       row.critical === 1,
+    mtime:          row.mtime,
+    hash:           row.hash,
+    embedding:      row.embedding ? unpackEmbedding(row.embedding) : [],
+    embeddingTitle: row.embedding_title ? unpackEmbedding(row.embedding_title) : [],
   };
 }
 
@@ -217,7 +221,8 @@ export function upsertFile(db: Database.Database, file: IndexedFile): void {
     critical:    file.critical ? 1 : 0,
     mtime:       file.mtime,
     hash:        file.hash,
-    embedding:   file.embedding.length > 0 ? packEmbedding(file.embedding) : null,
+    embedding:       file.embedding.length > 0 ? packEmbedding(file.embedding) : null,
+    embedding_title: file.embeddingTitle.length > 0 ? packEmbedding(file.embeddingTitle) : null,
   };
   const stmts = getStmts(db);
   // Remove stale row with same (id, type) but different path to avoid UNIQUE violation
@@ -229,9 +234,14 @@ export function upsertFile(db: Database.Database, file: IndexedFile): void {
 export function updateEmbedding(
   db: Database.Database,
   path: string,
-  embedding: number[]
+  embedding: number[],
+  embeddingTitle?: number[]
 ): void {
-  getStmts(db).updateEmbedding.run(packEmbedding(embedding), path);
+  getStmts(db).updateEmbedding.run(
+    packEmbedding(embedding),
+    embeddingTitle && embeddingTitle.length > 0 ? packEmbedding(embeddingTitle) : null,
+    path
+  );
   invalidateEmbeddingCache();
 }
 
@@ -294,8 +304,8 @@ export function keywordSearch(
   try {
     return getStmts(db).ftsSearch.all(safe, limit) as FTSResult[];
   } catch {
-    // FTS5 query syntax error — fall back to simple term search
-    const terms = safe.split(/\s+/).map(t => t + "*").join(" ");
+    // FTS5 query syntax error — fall back to individual term search (no wildcards)
+    const terms = safe.split(/\s+/).join(" OR ");
     try {
       return getStmts(db).ftsSearch.all(terms, limit) as FTSResult[];
     } catch {

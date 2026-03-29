@@ -20,7 +20,8 @@ export interface PCLFile {
 }
 
 export interface IndexedFile extends PCLFile {
-  embedding: number[];                 // 384-dim float vector (MiniLM-L6-v2)
+  embedding: number[];                 // 384-dim float vector (MiniLM-L6-v2) — body
+  embeddingTitle: number[];            // 384-dim float vector — title only
   title: string;                       // derived: frontmatter.name || frontmatter.title || id
   summary: string;                     // first 300 chars of body, for excerpts
   critical: boolean;                   // domain files with critical: true

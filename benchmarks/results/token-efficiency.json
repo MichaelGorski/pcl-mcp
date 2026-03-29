@@ -1,0 +1,12 @@
+{
+  "timestamp": "2026-03-26T11:23:41.469Z",
+  "results": [
+    {
+      "corpusSize": 10,
+      "pclSessionStartTokens": 3274,
+      "pasteAllTokens": 13594,
+      "savingsPercent": 75.91584522583491,
+      "ratio": 4.152107513744655
+    }
+  ]
+}

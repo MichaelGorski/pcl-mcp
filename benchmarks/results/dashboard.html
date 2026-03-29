@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PCL Benchmark Results</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+  :root {
+    --bg: #fcfbfa;
+    --border: #e5e2df;
+    --track: #F2F0EF;
+    --text: #171717;
+    --text-2: #525252;
+    --text-3: #a3a3a3;
+    --pcl: #245F73;
+    --pcl-bg: #d6e8ee;
+    --paste: #733E24;
+    --paste-bg: #f0ddd3;
+    --none: #BBBDBC;
+    --none-label: #999b9a;
+    --green: #245F73;
+    --red: #733E24;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 100%; margin: 0 auto; padding: 40px 48px 80px; }
+
+  header { margin-bottom: 36px; display: flex; align-items: baseline; justify-content: space-between; }
+  header h1 { font-size: 1.375rem; font-weight: 600; letter-spacing: -0.02em; }
+  header p { color: var(--text-3); font-size: 0.8125rem; }
+
+  /* KPIs */
+  .kpis {
+    display: grid; grid-template-columns: repeat(6, 1fr);
+    gap: 1px; background: var(--border); border: 1px solid var(--border);
+    border-radius: 8px; overflow: hidden; margin-bottom: 36px;
+  }
+  .kpi { background: var(--bg); padding: 20px 20px; }
+  .kpi-val { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.03em; line-height: 1; }
+  .kpi-label { font-size: 0.625rem; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
+  .kpi-hint { font-size: 0.625rem; color: var(--text-3); margin-top: 2px; font-style: italic; }
+
+  .sec { margin-bottom: 36px; }
+  .sec-title { font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-3); margin-bottom: 4px; }
+  .sec-desc { font-size: 0.75rem; color: var(--text-3); margin-bottom: 14px; line-height: 1.4; }
+
+  /* Legend */
+  .legend { display: flex; gap: 16px; margin-bottom: 12px; font-size: 0.75rem; color: var(--text-2); }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .dot { width: 8px; height: 8px; border-radius: 2px; }
+
+  /* Task Grid */
+  .task-grid { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .task-row {
+    display: grid; grid-template-columns: 48px 120px 1fr minmax(300px, 35%);
+    border-bottom: 1px solid var(--track); align-items: center;
+  }
+  .task-row:last-child { border-bottom: none; }
+  .task-row-head {
+    background: var(--track); font-size: 0.625rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-3);
+  }
+  .task-row-head > div { padding: 7px 12px; }
+  .task-row:not(.task-row-head):hover { background: #fafafa; }
+  .task-cell { padding: 8px 12px; font-size: 0.8125rem; }
+  .task-id { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .task-cat { font-size: 0.6875rem; color: var(--text-3); }
+  .task-desc { color: var(--text-2); font-size: 0.75rem; line-height: 1.3; }
+  .task-scores-cell { padding: 6px 12px; display: flex; flex-direction: column; gap: 2px; }
+  .score-bar-row { display: flex; align-items: center; gap: 4px; height: 14px; }
+  .score-label { font-size: 0.625rem; color: var(--text-3); width: 32px; text-align: right; flex-shrink: 0; font-weight: 500; }
+  .score-track { flex: 1; height: 10px; background: var(--track); border-radius: 2px; overflow: hidden; }
+  .score-fill { height: 100%; border-radius: 2px; transition: width 0.35s ease-out; }
+  .score-val { font-size: 0.6875rem; font-variant-numeric: tabular-nums; width: 30px; flex-shrink: 0; text-align: right; }
+  .score-best { font-weight: 700; color: var(--text); }
+  .score-dim { color: var(--text-3); }
+  .winner-tag { display: inline-block; font-size: 0.5rem; font-weight: 700; padding: 0 4px; border-radius: 2px; margin-left: 3px; vertical-align: middle; }
+
+  /* Grids */
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; }
+
+  /* Bar chart */
+  .chart-group { margin-bottom: 10px; }
+  .chart-group:last-child { margin-bottom: 0; }
+  .chart-label { font-size: 0.75rem; color: var(--text-2); margin-bottom: 3px; }
+  .bar-row { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; height: 14px; }
+  .bar-row:last-child { margin-bottom: 0; }
+  .bar-row-label { font-size: 0.5625rem; color: var(--text-3); width: 48px; text-align: right; flex-shrink: 0; font-weight: 500; }
+  .bar-track { flex: 1; height: 10px; background: var(--track); border-radius: 2px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 2px; transition: width 0.4s ease-out; }
+  .bar-val { font-size: 0.5625rem; color: var(--text-3); width: 32px; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+
+  /* Token */
+  .token-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .token-label { font-size: 0.75rem; color: var(--text-2); width: 64px; flex-shrink: 0; }
+  .token-track { flex: 1; height: 18px; background: var(--track); border-radius: 3px; overflow: hidden; }
+  .token-fill { height: 100%; border-radius: 3px; transition: width 0.5s ease-out; }
+  .token-val { font-size: 0.75rem; font-weight: 600; font-variant-numeric: tabular-nums; width: 56px; text-align: right; flex-shrink: 0; }
+
+  /* Metric */
+  .metric-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .metric-row:last-child { margin-bottom: 0; }
+  .metric-name { font-size: 0.75rem; color: var(--text-2); width: 56px; flex-shrink: 0; }
+  .metric-track { flex: 1; height: 16px; background: var(--track); border-radius: 3px; overflow: hidden; }
+  .metric-fill { height: 100%; border-radius: 3px; transition: width 0.4s ease-out; }
+  .metric-val { font-size: 0.75rem; font-weight: 600; font-variant-numeric: tabular-nums; width: 40px; flex-shrink: 0; }
+
+  /* Syntax */
+  .syntax-row { display: flex; gap: 20px; }
+  .syntax-item { flex: 1; }
+  .syntax-item .val { font-size: 1.25rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .syntax-item .lbl { font-size: 0.6875rem; color: var(--text-3); }
+
+  .footer { margin-top: 36px; padding-top: 12px; border-top: 1px solid var(--border); font-size: 0.6875rem; color: var(--text-3); }
+
+  @media (max-width: 1100px) {
+    .kpis { grid-template-columns: repeat(3, 1fr); }
+    .grid-3 { grid-template-columns: 1fr; }
+    .grid-2 { grid-template-columns: 1fr; }
+    .task-row { grid-template-columns: 42px 100px 1fr minmax(220px, 30%); }
+  }
+  @media (max-width: 700px) {
+    .wrap { padding: 24px 16px 48px; }
+    .kpis { grid-template-columns: repeat(2, 1fr); }
+    .task-row { grid-template-columns: 1fr; }
+    .task-row-head { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>PCL Benchmark Results</h1>
+    <p>claude-sonnet-4-20250514 &middot; 20 tasks &middot; 1 run &middot; March 2026</p>
+  </header>
+
+  <div class="kpis">
+    <div class="kpi">
+      <div class="kpi-val" style="color:var(--pcl)">8.18</div>
+      <div class="kpi-label">PCL Avg Score</div>
+      <div class="kpi-hint">higher = better (0-10)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val">6.04</div>
+      <div class="kpi-label">No Context Avg</div>
+      <div class="kpi-hint">baseline comparison</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val" style="color:var(--paste)">7.80</div>
+      <div class="kpi-label">Paste All Avg</div>
+      <div class="kpi-hint">all docs dumped in</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val" style="color:var(--green)">100%</div>
+      <div class="kpi-label">Context Recall</div>
+      <div class="kpi-hint">higher = better (0-100%)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val" style="color:var(--green)">76.5%</div>
+      <div class="kpi-label">Token Savings</div>
+      <div class="kpi-hint">vs paste-all approach</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val">0.928</div>
+      <div class="kpi-label">Search MRR</div>
+      <div class="kpi-hint">higher = better (0-1)</div>
+    </div>
+  </div>
+
+  <!-- Task Grid -->
+  <div class="sec">
+    <div class="sec-title">All 20 Tasks &mdash; AI Quality Scores</div>
+    <div class="sec-desc">
+      Each task asks Claude to generate code for a specific feature. The output is judged by a structured evaluator against product specs.
+      Scores are 0&ndash;10, <strong>higher is better</strong>. Bars ordered: PCL first (blue), Paste All (purple), No Context (gray) for easy comparison.
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="dot" style="background:var(--pcl)"></div>PCL (smart retrieval)</div>
+      <div class="legend-item"><div class="dot" style="background:var(--paste)"></div>Paste All (dump everything)</div>
+      <div class="legend-item"><div class="dot" style="background:var(--none)"></div>No Context (baseline)</div>
+    </div>
+    <div class="task-grid">
+      <div class="task-row task-row-head">
+        <div>ID</div><div>Category</div><div>Task Description</div><div>Score /10 &nbsp;(higher = better)</div>
+      </div>
+      <div id="task-rows"></div>
+    </div>
+  </div>
+
+  <!-- Row 2: Category + Search + Ablation -->
+  <div class="grid-3 sec">
+    <div>
+      <div class="sec-title">Category Averages</div>
+      <div class="sec-desc">Mean score per task category. <strong>Higher = better.</strong> Shows where PCL helps most vs baseline.</div>
+      <div id="categories"></div>
+    </div>
+    <div>
+      <div class="sec-title">Search Quality by Mode</div>
+      <div class="sec-desc">
+        How well PCL retrieves the right documents. All metrics <strong>higher = better</strong> (0&ndash;1 scale).<br>
+        <strong>P@k</strong> = precision in top-k results.
+        <strong>Recall@5</strong> = % of relevant docs found.
+        <strong>MRR</strong> = how early the first relevant result appears.
+        <strong>NDCG@5</strong> = ranking quality with position weighting.
+      </div>
+      <div id="search"></div>
+    </div>
+    <div>
+      <div class="sec-title">Ablation Study</div>
+      <div class="sec-desc">
+        Impact of removing components. Full PCL = hybrid (keyword + semantic). <strong>Higher = better.</strong>
+        Shows keyword search alone is ineffective; semantic is close but hybrid wins.
+      </div>
+      <div id="ablation"></div>
+    </div>
+  </div>
+
+  <!-- Row 3: Tokens + Context + Syntax -->
+  <div class="grid-3 sec">
+    <div>
+      <div class="sec-title">Token Efficiency</div>
+      <div class="sec-desc">Context window usage. PCL sends only relevant docs vs dumping everything. <strong>Fewer tokens = better</strong> (cheaper, faster, less noise).</div>
+      <div id="tokens"></div>
+    </div>
+    <div>
+      <div class="sec-title">Context Retrieval Quality</div>
+      <div class="sec-desc">
+        <strong>All higher = better</strong> (0&ndash;1 scale).<br>
+        <strong>Recall</strong> = found all required docs?
+        <strong>Precision</strong> = what % of retrieved docs were actually needed?
+        <strong>F1</strong> = harmonic mean of both.
+      </div>
+      <div id="context"></div>
+    </div>
+    <div>
+      <div class="sec-title">Syntax Validity</div>
+      <div class="sec-desc"><strong>Higher = better.</strong> % of generated code blocks with valid TypeScript syntax. Lower PCL rate reflects structured context references vs raw code blocks.</div>
+      <div id="syntax"></div>
+    </div>
+  </div>
+
+  <div class="footer">PCL &middot; Product Context Layer &middot; Benchmark run 2026-03-26</div>
+</div>
+
+<script>
+(function() {
+  var PCL = "var(--pcl)";
+  var PASTE = "var(--paste)";
+  var NONE = "var(--none)";
+
+  var tasks = [
+    {id:"01",cat:"spec_compliance",nc:4.0,pa:6.0,pcl:10.0,desc:"Implement main dashboard with active projects, time tracking, and task overview"},
+    {id:"02",cat:"spec_compliance",nc:5.0,pa:7.5,pcl:7.5,desc:"Build notification preferences for email, in-app, and push channels"},
+    {id:"03",cat:"spec_compliance",nc:10.0,pa:10.0,pcl:9.0,desc:"Create project creation form with name, timeline, tasks, GitHub integration"},
+    {id:"04",cat:"spec_compliance",nc:2.5,pa:8.8,pcl:8.8,desc:"Implement email notification service respecting preferences and daily limits"},
+    {id:"05",cat:"business_rule",nc:5.0,pa:8.0,pcl:8.0,desc:"Implement discount coupon feature for subscription checkout via Stripe"},
+    {id:"06",cat:"business_rule",nc:5.0,pa:7.5,pcl:8.8,desc:"Implement plan downgrade flow with end-of-billing-period scheduling"},
+    {id:"07",cat:"business_rule",nc:1.0,pa:4.0,pcl:4.0,desc:"Implement account deletion with data anonymization instead of hard delete"},
+    {id:"08",cat:"business_rule",nc:3.3,pa:10.0,pcl:8.3,desc:"Implement refund processing service with 48-hour eligibility window"},
+    {id:"09",cat:"persona_alignment",nc:6.3,pa:5.0,pcl:5.0,desc:"Build global settings page for profile, workspace preferences, and integrations"},
+    {id:"10",cat:"persona_alignment",nc:6.3,pa:5.0,pcl:3.8,desc:"Design onboarding wizard guiding new users through initial setup steps"},
+    {id:"11",cat:"persona_alignment",nc:6.3,pa:7.5,pcl:7.5,desc:"Build searchable help and documentation page for developers and PMs"},
+    {id:"12",cat:"architecture",nc:1.0,pa:10.0,pcl:10.0,desc:"Add Next.js App Router API endpoint for project analytics with Supabase"},
+    {id:"13",cat:"architecture",nc:8.8,pa:10.0,pcl:10.0,desc:"Create SQL migration for comments table with Row Level Security policies"},
+    {id:"14",cat:"architecture",nc:8.0,pa:9.0,pcl:9.0,desc:"Add Supabase auth to protected billing route with middleware"},
+    {id:"15",cat:"journey_correctness",nc:10.0,pa:3.0,pcl:10.0,desc:"Implement full onboarding: signup, verification, workspace, team, first project"},
+    {id:"16",cat:"journey_correctness",nc:10.0,pa:8.8,pcl:10.0,desc:"Build email verification page with status, resend, and auto-redirect"},
+    {id:"17",cat:"journey_correctness",nc:6.3,pa:8.8,pcl:8.8,desc:"Implement first project creation wizard following 5-step developer journey"},
+    {id:"18",cat:"business_rule",nc:6.0,pa:8.0,pcl:8.0,desc:"Implement 14-day trial period management with expiration and conversion"},
+    {id:"19",cat:"architecture",nc:6.0,pa:9.0,pcl:7.0,desc:"Implement GitHub webhook handler for push, PR, and issue events"},
+    {id:"20",cat:"journey_correctness",nc:10.0,pa:10.0,pcl:10.0,desc:"Build workspace creation with naming, team invites, and plan selection"}
+  ];
+
+  // Task grid — order: PCL, Paste All, No Context
+  var container = document.getElementById("task-rows");
+  tasks.forEach(function(t) {
+    var best = Math.max(t.nc, t.pa, t.pcl);
+    var row = document.createElement("div");
+    row.className = "task-row";
+
+    var idCell = document.createElement("div");
+    idCell.className = "task-cell task-id";
+    idCell.textContent = t.id;
+    row.appendChild(idCell);
+
+    var catCell = document.createElement("div");
+    catCell.className = "task-cell task-cat";
+    catCell.textContent = t.cat.replace(/_/g, " ");
+    row.appendChild(catCell);
+
+    var descCell = document.createElement("div");
+    descCell.className = "task-cell task-desc";
+    descCell.textContent = t.desc;
+    row.appendChild(descCell);
+
+    var scCell = document.createElement("div");
+    scCell.className = "task-scores-cell";
+
+    // PCL first, then Paste All, then No Context
+    var bars = [
+      {v:t.pcl, label:"PCL", color:PCL},
+      {v:t.pa,  label:"Paste", color:PASTE},
+      {v:t.nc,  label:"None", color:NONE}
+    ];
+
+    bars.forEach(function(b) {
+      var r = document.createElement("div");
+      r.className = "score-bar-row";
+
+      var lbl = document.createElement("div");
+      lbl.className = "score-label";
+      lbl.style.color = b.color === NONE ? "var(--none-label)" : b.color;
+      lbl.textContent = b.label;
+
+      var track = document.createElement("div");
+      track.className = "score-track";
+      var fill = document.createElement("div");
+      fill.className = "score-fill";
+      fill.style.background = b.color;
+      fill.style.width = "0%";
+      track.appendChild(fill);
+
+      var val = document.createElement("div");
+      val.className = "score-val " + (b.v === best ? "score-best" : "score-dim");
+      val.textContent = b.v.toFixed(1);
+
+      r.appendChild(lbl);
+      r.appendChild(track);
+      r.appendChild(val);
+      scCell.appendChild(r);
+      setTimeout(function(){ fill.style.width = (b.v / 10 * 100) + "%"; }, 40);
+    });
+
+    row.appendChild(scCell);
+    container.appendChild(row);
+  });
+
+  // Helpers
+  function avg(a) { return a.reduce(function(s,v){return s+v},0)/a.length; }
+
+  function barRow(label, value, max, color) {
+    var row = document.createElement("div");
+    row.className = "bar-row";
+    var lbl = document.createElement("div");
+    lbl.className = "bar-row-label";
+    lbl.textContent = label;
+    var track = document.createElement("div");
+    track.className = "bar-track";
+    var fill = document.createElement("div");
+    fill.className = "bar-fill";
+    fill.style.background = color;
+    fill.style.width = "0%";
+    track.appendChild(fill);
+    var val = document.createElement("div");
+    val.className = "bar-val";
+    val.textContent = max > 1 ? value.toFixed(1) : value.toFixed(3);
+    row.appendChild(lbl);
+    row.appendChild(track);
+    row.appendChild(val);
+    setTimeout(function(){ fill.style.width = (value / max * 100) + "%"; }, 60);
+    return row;
+  }
+
+  // Categories — PCL first
+  var cats = {};
+  tasks.forEach(function(t) {
+    if (!cats[t.cat]) cats[t.cat] = {nc:[], pa:[], pcl:[]};
+    cats[t.cat].nc.push(t.nc);
+    cats[t.cat].pa.push(t.pa);
+    cats[t.cat].pcl.push(t.pcl);
+  });
+  var catEl = document.getElementById("categories");
+  Object.keys(cats).forEach(function(c) {
+    var d = cats[c];
+    var g = document.createElement("div");
+    g.className = "chart-group";
+    var lbl = document.createElement("div");
+    lbl.className = "chart-label";
+    lbl.textContent = c.replace(/_/g, " ");
+    g.appendChild(lbl);
+    g.appendChild(barRow("PCL", avg(d.pcl), 10, PCL));
+    g.appendChild(barRow("Paste All", avg(d.pa), 10, PASTE));
+    g.appendChild(barRow("No Ctx", avg(d.nc), 10, NONE));
+    catEl.appendChild(g);
+  });
+
+  // Search — Hybrid (PCL color), Semantic, Keyword
+  var searchData = [
+    {name:"P@1",h:0.867,s:0.867,k:0.333},
+    {name:"P@3",h:0.589,s:0.578,k:0.267},
+    {name:"P@5",h:0.460,s:0.453,k:0.267},
+    {name:"Recall@5",h:0.872,s:0.853,k:0.219},
+    {name:"MRR",h:0.928,s:0.919,k:0.333},
+    {name:"NDCG@5",h:0.867,s:0.855,k:0.287}
+  ];
+  var searchEl = document.getElementById("search");
+  searchData.forEach(function(m) {
+    var g = document.createElement("div");
+    g.className = "chart-group";
+    var lbl = document.createElement("div");
+    lbl.className = "chart-label";
+    lbl.textContent = m.name;
+    g.appendChild(lbl);
+    g.appendChild(barRow("Hybrid", m.h, 1, PCL));
+    g.appendChild(barRow("Semantic", m.s, 1, PASTE));
+    g.appendChild(barRow("Keyword", m.k, 1, NONE));
+    searchEl.appendChild(g);
+  });
+
+  // Ablation
+  var ablData = [
+    {name:"NDCG@5",f:0.867,s:0.855,k:0.287},
+    {name:"MRR",f:0.928,s:0.919,k:0.333},
+    {name:"Recall@5",f:0.872,s:0.853,k:0.219}
+  ];
+  var ablEl = document.getElementById("ablation");
+  ablData.forEach(function(m) {
+    var g = document.createElement("div");
+    g.className = "chart-group";
+    var lbl = document.createElement("div");
+    lbl.className = "chart-label";
+    lbl.textContent = m.name;
+    g.appendChild(lbl);
+    g.appendChild(barRow("Full PCL", m.f, 1, PCL));
+    g.appendChild(barRow("Semantic", m.s, 1, PASTE));
+    g.appendChild(barRow("Keyword", m.k, 1, NONE));
+    ablEl.appendChild(g);
+  });
+
+  // Tokens
+  var tokEl = document.getElementById("tokens");
+  function tokenRow(label, tokens, maxTokens, color) {
+    var row = document.createElement("div");
+    row.className = "token-row";
+    var lbl = document.createElement("div");
+    lbl.className = "token-label";
+    lbl.textContent = label;
+    var track = document.createElement("div");
+    track.className = "token-track";
+    var fill = document.createElement("div");
+    fill.className = "token-fill";
+    fill.style.background = color;
+    fill.style.width = "0%";
+    track.appendChild(fill);
+    var val = document.createElement("div");
+    val.className = "token-val";
+    val.textContent = tokens.toLocaleString();
+    row.appendChild(lbl);
+    row.appendChild(track);
+    row.appendChild(val);
+    setTimeout(function(){ fill.style.width = (tokens / maxTokens * 100) + "%"; }, 100);
+    return row;
+  }
+  tokEl.appendChild(tokenRow("PCL", 3023, 12886, PCL));
+  tokEl.appendChild(tokenRow("Paste All", 12886, 12886, PASTE));
+  var note = document.createElement("div");
+  note.style.cssText = "font-size:0.75rem;color:var(--text-3);margin-top:8px;";
+  note.innerHTML = "<strong>4.26x</strong> compression &mdash; PCL uses 76.5% fewer tokens while scoring higher";
+  tokEl.appendChild(note);
+
+  // Context
+  var ctxEl = document.getElementById("context");
+  [{n:"Recall",v:1.000},{n:"Precision",v:0.288},{n:"F1",v:0.443}].forEach(function(m) {
+    var row = document.createElement("div");
+    row.className = "metric-row";
+    var name = document.createElement("div");
+    name.className = "metric-name";
+    name.textContent = m.n;
+    var track = document.createElement("div");
+    track.className = "metric-track";
+    var fill = document.createElement("div");
+    fill.className = "metric-fill";
+    fill.style.background = m.v > 0.8 ? "var(--green)" : m.v > 0.4 ? PCL : "var(--text-3)";
+    fill.style.width = "0%";
+    track.appendChild(fill);
+    var val = document.createElement("div");
+    val.className = "metric-val";
+    val.textContent = m.v.toFixed(3);
+    row.appendChild(name);
+    row.appendChild(track);
+    row.appendChild(val);
+    ctxEl.appendChild(row);
+    setTimeout(function(){ fill.style.width = (m.v * 100) + "%"; }, 100);
+  });
+
+  // Syntax
+  var synEl = document.getElementById("syntax");
+  var synRow = document.createElement("div");
+  synRow.className = "syntax-row";
+  [{l:"No Context",v:"70%",c:"var(--text)"},{l:"Paste All",v:"64%",c:PASTE},{l:"PCL",v:"36%",c:PCL}].forEach(function(s) {
+    var item = document.createElement("div");
+    item.className = "syntax-item";
+    var val = document.createElement("div");
+    val.className = "val";
+    val.style.color = s.c;
+    val.textContent = s.v;
+    var lbl = document.createElement("div");
+    lbl.className = "lbl";
+    lbl.textContent = s.l;
+    item.appendChild(val);
+    item.appendChild(lbl);
+    synRow.appendChild(item);
+  });
+  synEl.appendChild(synRow);
+})();
+</script>
+</body>
+</html>

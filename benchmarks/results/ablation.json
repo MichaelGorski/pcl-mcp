@@ -1,0 +1,38 @@
+{
+  "timestamp": "2026-03-25T09:28:00.142Z",
+  "results": [
+    {
+      "config": "Full PCL (hybrid)",
+      "metrics": {
+        "precisionAt1": 0.8666666666666667,
+        "precisionAt3": 0.5888888888888888,
+        "precisionAt5": 0.4600000000000001,
+        "recallAt5": 0.8722222222222222,
+        "mrr": 0.9277777777777778,
+        "ndcgAt5": 0.8671156642562867
+      }
+    },
+    {
+      "config": "Keyword only (no embeddings)",
+      "metrics": {
+        "precisionAt1": 0.3333333333333333,
+        "precisionAt3": 0.26666666666666666,
+        "precisionAt5": 0.26666666666666666,
+        "recallAt5": 0.21944444444444447,
+        "mrr": 0.3333333333333333,
+        "ndcgAt5": 0.2871386727801177
+      }
+    },
+    {
+      "config": "Semantic only (no BM25)",
+      "metrics": {
+        "precisionAt1": 0.8666666666666667,
+        "precisionAt3": 0.5777777777777777,
+        "precisionAt5": 0.4533333333333334,
+        "recallAt5": 0.8527777777777777,
+        "mrr": 0.9194444444444445,
+        "ndcgAt5": 0.8547956410447248
+      }
+    }
+  ]
+}

@@ -1,0 +1,1522 @@
+{
+  "timestamp": "2026-03-26T09:16:15.647Z",
+  "model": "claude-sonnet-4-20250514",
+  "runs": 1,
+  "results": [
+    {
+      "taskId": "task-01",
+      "category": "spec_compliance",
+      "noContext": {
+        "mean": 4,
+        "stddev": 0,
+        "runs": [
+          4
+        ]
+      },
+      "pasteAll": {
+        "mean": 6,
+        "stddev": 0,
+        "runs": [
+          6
+        ]
+      },
+      "pcl": {
+        "mean": 10,
+        "stddev": 0,
+        "runs": [
+          10
+        ]
+      },
+      "contextMetrics": {
+        "recall": 1,
+        "precision": 0.375,
+        "f1": 0.5454545454545454,
+        "retrieved": [
+          "product",
+          "billing-rules",
+          "data-governance",
+          "dashboard",
+          "onboarding",
+          "first-project",
+          "dev-alex",
+          "sarah-pm"
+        ],
+        "required": [
+          "dashboard",
+          "product",
+          "sarah-pm"
+        ],
+        "hits": [
+          "dashboard",
+          "product",
+          "sarah-pm"
+        ],
+        "misses": [],
+        "noise": [
+          "billing-rules",
+          "data-governance",
+          "onboarding",
+          "first-project",
+          "dev-alex"
+        ]
+      },
+      "syntax": {
+        "noContext": {
+          "valid": 0,
+          "total": 0
+        },
+        "pasteAll": {
+          "valid": 1,
+          "total": 1
+        },
+        "pcl": {
+          "valid": 0,
+          "total": 0
+        }
+      },
+      "pclTokens": 10822,
+      "pasteAllTokens": 12886
+    },
+    {
+      "taskId": "task-02",
+      "category": "spec_compliance",
+      "noContext": {
+        "mean": 5,
+        "stddev": 0,
+        "runs": [
+          5
+        ]
+      },
+      "pasteAll": {
+        "mean": 7.5,
+        "stddev": 0,
+        "runs": [
+          7.5
+        ]
+      },
+      "pcl": {
+        "mean": 7.5,
+        "stddev": 0,
+        "runs": [
+          7.5
+        ]
+      },
+      "contextMetrics": {
+        "recall": 1,
+        "precision": 0.3,
+        "f1": 0.4615384615384615,
+        "retrieved": [
+          "product",
+          "billing-rules",
+          "data-governance",
+          "notifications",
+          "dashboard",
+          "adr-001-nextjs",
+          "onboarding",
+          "first-project",
+          "sarah-pm",
+          "dev-alex"
+        ],
+        "required": [
+          "notifications",
+          "dev-alex",
+          "sarah-pm"
+        ],
+        "hits": [
+          "notifications",
+          "dev-alex",
+          "sarah-pm"
+        ],
+        "misses": [],
+        "noise": [
+          "product",
+          "billing-rules",
+          "data-governance",
+          "dashboard",
+          "adr-001-nextjs",
+          "onboarding",
+          "first-project"
+        ]
+      },
+      "syntax": {
+        "noContext": {
+          "valid": 0,
+          "total": 0
+        },
+        "pasteAll": {
+          "valid": 0,
+          "total": 0
+        },
+        "pcl": {
+          "valid": 0,
+          "total": 0
+        }
+      },
+      "pclTokens": 12886,
+      "pasteAllTokens": 12886
+    },
+    {
+      "taskId": "task-03",
+      "category": "spec_compliance",
+      "noContext": {
+        "mean": 10,
+        "stddev": 0,
+        "runs": [
+          10
+        ]
+      },
+      "pasteAll": {
+        "mean": 10,
+        "stddev": 0,
+        "runs": [
+          10
+        ]
+      },
+      "pcl": {
+        "mean": 9,
+        "stddev": 0,
+        "runs": [
+          9
+        ]
+      },
+      "contextMetrics": {
+        "recall": 1,
+        "precision": 0.375,
+        "f1": 0.5454545454545454,
+        "retrieved": [
+          "product",
+          "billing-rules",
+          "data-governance",
+          "first-project",
+          "dashboard",
+          "onboarding",
+          "dev-alex",
+          "sarah-pm"
+        ],
+        "required": [
+          "first-project",
+          "dev-alex",
+          "dashboard"
+        ],
+        "hits": [
+          "first-project",
+          "dev-alex",
+          "dashboard"
+        ],
+        "misses": [],
+        "noise": [
+          "product",
+          "billing-rules",
+          "data-governance",
+          "onboarding",
+          "sarah-pm"
+        ]
+      },
+      "syntax": {
+        "noContext": {
+          "valid": 0,
+          "total": 0
+        },
+        "pasteAll": {
+          "valid": 0,
+          "total": 0
+        },
+        "pcl": {
+          "valid": 0,
+          "total": 0
+        }
+      },
+      "pclTokens": 10822,
+      "pasteAllTokens": 12886
+    },
+    {
+      "taskId": "task-04",
+      "category": "spec_compliance",
+      "noContext": {
+        "mean": 2.5,
+        "stddev": 0,
+        "runs": [
+          2.5
+        ]
+      },
+      "pasteAll": {
+        "mean": 8.8,
+        "stddev": 0,
+        "runs": [
+          8.8
+        ]
+      },
+      "pcl": {
+        "mean": 8.8,
+        "stddev": 0,
+        "runs": [
+          8.8
+        ]
+      },
+      "contextMetrics": {
+        "recall": 1,
+        "precision": 0.25,
+        "f1": 0.4,
+        "retrieved": [
+          "product",
+          "billing-rules",
+          "data-governance",
+          "notifications",
+          "onboarding",
+          "adr-001-nextjs",
+          "sarah-pm",
+          "dashboard"
+        ],
+        "required": [
+          "notifications",
+          "data-governance"
+        ],
+        "hits": [
+          "notifications",
+          "data-governance"
+        ],
+        "misses": [],
+        "noise": [
+          "product",
+          "billing-rules",
+          "onboarding",
+          "adr-001-nextjs",
+          "sarah-pm",
+          "dashboard"
+        ]
+      },
+      "syntax": {
+        "noContext": {
+          "valid": 1,
+          "total": 1
+        },
+        "pasteAll": {
+          "valid": 0,
+          "total": 0
+        },
+        "pcl": {
+          "valid": 0,
+          "total": 0
+        }
+      },
+      "pclTokens": 11676,
+      "pasteAllTokens": 12886
+    },
+    {
+      "taskId": "task-05",
+      "category": "business_rule",
+      "noContext": {
+        "mean": 5,
+        "stddev": 0,
+        "runs": [
+          5
+        ]
+      },
+      "pasteAll": {
+        "mean": 8,
+        "stddev": 0,
+        "runs": [
+          8
+        ]
+      },
+      "pcl": {
+        "mean": 8,
+        "stddev": 0,
+        "runs": [
+          8
+        ]
+      },
+      "contextMetrics": {
+        "recall": 1,
+        "precision": 0.2857142857142857,
+        "f1": 0.4444444444444445,
+        "retrieved": [
+          "product",
+          "billing-rules",
+          "data-governance",
+          "dashboard",
+          "notifications",
+          "onboarding",
+          "sarah-pm"
+        ],
+        "required": [
+          "billing-rules",
+          "product"
+        ],
+        "hits": [
+          "billing-rules",
+          "product"
+        ],
+        "misses": [],
+        "noise": [
+          "data-governance",
+          "dashboard",
+          "notifications",
+          "onboarding",
+          "sarah-pm"
+        ]
+      },
+      "syntax": {
+        "noContext": {
+          "valid": 1,
+          "total": 1
+        },
+        "pasteAll": {
+          "valid": 0,
+          "total": 1
+        },
+        "pcl": {
+          "valid": 0,
+          "total": 1
+        }
+      },
+      "pclTokens": 10167,
+      "pasteAllTokens": 12886
+    },
+    {
+      "taskId": "task-06",
+      "category": "business_rule",
+      "noContext": {
+        "mean": 5,
+        "stddev": 0,
+        "runs": [
+          5
+        ]
+      },
+      "pasteAll": {
+        "mean": 7.5,
+        "stddev": 0,
+        "runs": [
+          7.5
+        ]
+      },
+      "pcl": {
+        "mean": 8.8,
+        "stddev": 0,
+        "runs": [
+          8.8
+        ]
+      },
+      "contextMetrics": {
+        "recall": 1,
+        "precision": 0.3333333333333333,
+        "f1": 0.5,
+        "retrieved": [
+          "product",
+          "billing-rules",
+          "data-governance",
+          "adr-001-nextjs",
+          "dev-alex",
+          "sarah-pm",
+          "first-project",
+          "onboarding",
+          "dashboard"
+        ],
+        "required": [
+          "billing-rules",
+          "product",
+          "data-governance"
+        ],
+        "hits": [
+          "billing-rules",
+          "product",
+          "data-governance"
+        ],
+        "misses": [],
+        "noise": [
+          "adr-001-nextjs",
+          "dev-alex",
+          "sarah-pm",
+          "first-project",
+          "onboarding",
+          "dashboard"
+        ]
+      },
+      "syntax": {
+        "noContext": {
+          "valid": 1,
+          "total": 1
+        },
+        "pasteAll": {
+          "valid": 1,
+          "total": 1
+        },
+        "pcl": {
+          "valid": 0,
+          "total": 1
+        }
+      },
+      "pclTokens": 13155,
+      "pasteAllTokens": 12886
+    },
+    {
+      "taskId": "task-07",
+      "category": "business_rule",
+      "noContext": {
+        "mean": 1,
+        "stddev": 0,
+        "runs": [
+          1
+        ]
+      },
+      "pasteAll": {
+        "mean": 4,
+        "stddev": 0,
+        "runs": [
+          4
+        ]
+      },
+      "pcl": {
+        "mean": 4,
+        "stddev": 0,
+        "runs": [
+          4
+        ]
+      },
+      "contextMetrics": {
+        "recall": 1,
+        "precision": 0.2222222222222222,
+        "f1": 0.3636363636363636,
+        "retrieved": [
+          "product",
+          "billing-rules",
+          "data-governance",
+          "adr-001-nextjs",
+          "dev-alex",
+          "sarah-pm",
+          "first-project",
+          "onboarding",
+          "dashboard"
+        ],
+        "required": [
+          "data-governance",
+          "billing-rules"
+        ],
+        "hits": [
+          "data-governance",
+          "billing-rules"
+        ],
+        "misses": [],
+        "noise": [
+          "product",
+          "adr-001-nextjs",
+          "dev-alex",
+          "sarah-pm",
+          "first-project",
+          "onboarding",
+          "dashboard"
+        ]
+      },
+      "syntax": {
+        "noContext": {
+          "valid": 0,
+          "total": 1
+        },
+        "pasteAll": {
+          "valid": 0,
+          "total": 1
+        },
+        "pcl": {
+          "valid": 0,
+          "total": 1
+        }
+      },
+      "pclTokens": 14315,
+      "pasteAllTokens": 12886
+    },
+    {
+      "taskId": "task-08",
+      "category": "business_rule",
+      "noContext": {
+        "mean": 3.3,
+        "stddev": 0,
+        "runs": [
+          3.3
+        ]
+      },
+      "pasteAll": {
+        "mean": 10,
+        "stddev": 0,
+        "runs": [
+          10
+        ]
+      },
+      "pcl": {
+        "mean": 8.3,
+        "stddev": 0,
+        "runs": [
+          8.3
+        ]
+      },
+      "contextMetrics": {
+        "recall": 1,
+        "precision": 0.1,
+        "f1": 0.18181818181818182,
+        "retrieved": [
+          "product",
+          "billing-rules",
+          "data-governance",
+          "notifications",
+          "adr-001-nextjs",
+          "dev-alex",
+          "sarah-pm",
+          "first-project",
+          "onboarding",
+          "dashboard"
+        ],
+        "required": [
+          "billing-rules"
+        ],
+        "hits": [
+          "billing-rules"
+        ],
+        "misses": [],
+        "noise": [
+          "product",
+          "data-governance",
+          "notifications",
+          "adr-001-nextjs",
+          "dev-alex",
+          "sarah-pm",
+          "first-project",
+          "onboarding",
+          "dashboard"
+        ]
+      },
+      "syntax": {
+        "noContext": {
+          "valid": 1,
+          "total": 1
+        },
+        "pasteAll": {
+          "valid": 0,
+          "total": 1
+        },
+        "pcl": {
+          "valid": 0,
+          "total": 1
+        }
+      },
+      "pclTokens": 14751,
+      "pasteAllTokens": 12886
+    },
+    {
+      "taskId": "task-09",
+      "category": "persona_alignment",
+      "noContext": {
+        "mean": 6.3,
+        "stddev": 0,
+        "runs": [
+          6.3
+        ]
+      },
+      "pasteAll": {
+        "mean": 5,
+        "stddev": 0,
+        "runs": [
+          5
+        ]
+      },
+      "pcl": {
+        "mean": 5,
+        "stddev": 0,
+        "runs": [
+          5
+        ]
+      },
+      "contextMetrics": {
+        "recall": 1,
+        "precision": 0.3333333333333333,
+        "f1": 0.5,
+        "retrieved": [
+          "product",
+          "billing-rules",
+          "data-governance",
+          "dashboard",
+          "onboarding",
+          "first-project",
+          "sarah-pm",
+          "dev-alex",
+          "notifications"
+        ],
+        "required": [
+          "dev-alex",
+          "sarah-pm",
+          "notifications"
+        ],
+        "hits": [
+          "dev-alex",
+          "sarah-pm",
+          "notifications"
+        ],
+        "misses": [],
+        "noise": [
+          "product",
+          "billing-rules",
+          "data-governance",
+          "dashboard",
+          "onboarding",
+          "first-project"
+        ]
+      },
+      "syntax": {
+        "noContext": {
+          "valid": 0,
+          "total": 0
+        },
+        "pasteAll": {
+          "valid": 1,
+          "total": 1
+        },
+        "pcl": {
+          "valid": 0,
+          "total": 0
+        }
+      },
+      "pclTokens": 13578,
+      "pasteAllTokens": 12886
+    },
+    {
+      "taskId": "task-10",
+      "category": "persona_alignment",
+      "noContext": {
+        "mean": 6.3,
+        "stddev": 0,
+        "runs": [
+          6.3
+        ]
+      },
+      "pasteAll": {
+        "mean": 5,
+        "stddev": 0,
+        "runs": [
+          5
+        ]
+      },
+      "pcl": {
+        "mean": 3.8,
+        "stddev": 0,
+        "runs": [
+          3.8
+        ]
+      },
+      "contextMetrics": {
+        "recall": 1,
+        "precision": 0.375,
+        "f1": 0.5454545454545454,
+        "retrieved": [
+          "product",
+          "billing-rules",
+          "data-governance",
+          "onboarding",
+          "dashboard",
+          "first-project",
+          "sarah-pm",
+          "dev-alex"
+        ],
+        "required": [
+          "onboarding",
+          "sarah-pm",
+          "dev-alex"
+        ],
+        "hits": [
+          "onboarding",
+          "sarah-pm",
+          "dev-alex"
+        ],
+        "misses": [],
+        "noise": [
+          "product",
+          "billing-rules",
+          "data-governance",
+          "dashboard",
+          "first-project"
+        ]
+      },
+      "syntax": {
+        "noContext": {
+          "valid": 0,
+          "total": 1
+        },
+        "pasteAll": {
+          "valid": 0,
+          "total": 0
+        },
+        "pcl": {
+          "valid": 0,
+          "total": 0
+        }
+      },
+      "pclTokens": 10822,
+      "pasteAllTokens": 12886
+    },
+    {
+      "taskId": "task-11",
+      "category": "persona_alignment",
+      "noContext": {
+        "mean": 6.3,
+        "stddev": 0,
+        "runs": [
+          6.3
+        ]
+      },
+      "pasteAll": {
+        "mean": 7.5,
+        "stddev": 0,
+        "runs": [
+          7.5
+        ]
+      },
+      "pcl": {
+        "mean": 7.5,
+        "stddev": 0,
+        "runs": [
+          7.5
+        ]
+      },
+      "contextMetrics": {
+        "recall": 1,
+        "precision": 0.3333333333333333,
+        "f1": 0.5,
+        "retrieved": [
+          "product",
+          "billing-rules",
+          "data-governance",
+          "dashboard",
+          "onboarding",
+          "first-project",
+          "adr-001-nextjs",
+          "sarah-pm",
+          "dev-alex"
+        ],
+        "required": [
+          "dev-alex",
+          "sarah-pm",
+          "product"
+        ],
+        "hits": [
+          "dev-alex",
+          "sarah-pm",
+          "product"
+        ],
+        "misses": [],
+        "noise": [
+          "billing-rules",
+          "data-governance",
+          "dashboard",
+          "onboarding",
+          "first-project",
+          "adr-001-nextjs"
+        ]
+      },
+      "syntax": {
+        "noContext": {
+          "valid": 0,
+          "total": 0
+        },
+        "pasteAll": {
+          "valid": 0,
+          "total": 0
+        },
+        "pcl": {
+          "valid": 0,
+          "total": 0
+        }
+      },
+      "pclTokens": 12163,
+      "pasteAllTokens": 12886
+    },
+    {
+      "taskId": "task-12",
+      "category": "architecture",
+      "noContext": {
+        "mean": 1,
+        "stddev": 0,
+        "runs": [
+          1
+        ]
+      },
+      "pasteAll": {
+        "mean": 10,
+        "stddev": 0,
+        "runs": [
+          10
+        ]
+      },
+      "pcl": {
+        "mean": 10,
+        "stddev": 0,
+        "runs": [
+          10
+        ]
+      },
+      "contextMetrics": {
+        "recall": 1,
+        "precision": 0.3333333333333333,
+        "f1": 0.5,
+        "retrieved": [
+          "product",
+          "billing-rules",
+          "data-governance",
+          "dashboard",
+          "first-project",
+          "adr-001-nextjs",
+          "onboarding",
+          "sarah-pm",
+          "dev-alex"
+        ],
+        "required": [
+          "adr-001-nextjs",
+          "dashboard",
+          "product"
+        ],
+        "hits": [
+          "adr-001-nextjs",
+          "dashboard",
+          "product"
+        ],
+        "misses": [],
+        "noise": [
+          "billing-rules",
+          "data-governance",
+          "first-project",
+          "onboarding",
+          "sarah-pm",
+          "dev-alex"
+        ]
+      },
+      "syntax": {
+        "noContext": {
+          "valid": 0,
+          "total": 0
+        },
+        "pasteAll": {
+          "valid": 1,
+          "total": 1
+        },
+        "pcl": {
+          "valid": 1,
+          "total": 1
+        }
+      },
+      "pclTokens": 12163,
+      "pasteAllTokens": 12886
+    },
+    {
+      "taskId": "task-13",
+      "category": "architecture",
+      "noContext": {
+        "mean": 8.8,
+        "stddev": 0,
+        "runs": [
+          8.8
+        ]
+      },
+      "pasteAll": {
+        "mean": 10,
+        "stddev": 0,
+        "runs": [
+          10
+        ]
+      },
+      "pcl": {
+        "mean": 10,
+        "stddev": 0,
+        "runs": [
+          10
+        ]
+      },
+      "contextMetrics": {
+        "recall": 1,
+        "precision": 0.2222222222222222,
+        "f1": 0.3636363636363636,
+        "retrieved": [
+          "product",
+          "billing-rules",
+          "data-governance",
+          "sarah-pm",
+          "dev-alex",
+          "first-project",
+          "onboarding",
+          "dashboard",
+          "adr-001-nextjs"
+        ],
+        "required": [
+          "adr-001-nextjs",
+          "data-governance"
+        ],
+        "hits": [
+          "adr-001-nextjs",
+          "data-governance"
+        ],
+        "misses": [],
+        "noise": [
+          "product",
+          "billing-rules",
+          "sarah-pm",
+          "dev-alex",
+          "first-project",
+          "onboarding",
+          "dashboard"
+        ]
+      },
+      "syntax": {
+        "noContext": {
+          "valid": 0,
+          "total": 0
+        },
+        "pasteAll": {
+          "valid": 0,
+          "total": 0
+        },
+        "pcl": {
+          "valid": 0,
+          "total": 0
+        }
+      },
+      "pclTokens": 13323,
+      "pasteAllTokens": 12886
+    },
+    {
+      "taskId": "task-14",
+      "category": "architecture",
+      "noContext": {
+        "mean": 8,
+        "stddev": 0,
+        "runs": [
+          8
+        ]
+      },
+      "pasteAll": {
+        "mean": 9,
+        "stddev": 0,
+        "runs": [
+          9
+        ]
+      },
+      "pcl": {
+        "mean": 9,
+        "stddev": 0,
+        "runs": [
+          9
+        ]
+      },
+      "contextMetrics": {
+        "recall": 1,
+        "precision": 0.2857142857142857,
+        "f1": 0.4444444444444445,
+        "retrieved": [
+          "product",
+          "billing-rules",
+          "data-governance",
+          "adr-001-nextjs",
+          "dashboard",
+          "sarah-pm",
+          "onboarding"
+        ],
+        "required": [
+          "adr-001-nextjs",
+          "billing-rules"
+        ],
+        "hits": [
+          "adr-001-nextjs",
+          "billing-rules"
+        ],
+        "misses": [],
+        "noise": [
+          "product",
+          "data-governance",
+          "dashboard",
+          "sarah-pm",
+          "onboarding"
+        ]
+      },
+      "syntax": {
+        "noContext": {
+          "valid": 1,
+          "total": 1
+        },
+        "pasteAll": {
+          "valid": 1,
+          "total": 1
+        },
+        "pcl": {
+          "valid": 0,
+          "total": 1
+        }
+      },
+      "pclTokens": 11072,
+      "pasteAllTokens": 12886
+    },
+    {
+      "taskId": "task-15",
+      "category": "journey_correctness",
+      "noContext": {
+        "mean": 10,
+        "stddev": 0,
+        "runs": [
+          10
+        ]
+      },
+      "pasteAll": {
+        "mean": 3,
+        "stddev": 0,
+        "runs": [
+          3
+        ]
+      },
+      "pcl": {
+        "mean": 10,
+        "stddev": 0,
+        "runs": [
+          10
+        ]
+      },
+      "contextMetrics": {
+        "recall": 1,
+        "precision": 0.3333333333333333,
+        "f1": 0.5,
+        "retrieved": [
+          "product",
+          "billing-rules",
+          "data-governance",
+          "onboarding",
+          "dashboard",
+          "first-project",
+          "adr-001-nextjs",
+          "sarah-pm",
+          "dev-alex"
+        ],
+        "required": [
+          "onboarding",
+          "sarah-pm",
+          "product"
+        ],
+        "hits": [
+          "onboarding",
+          "sarah-pm",
+          "product"
+        ],
+        "misses": [],
+        "noise": [
+          "billing-rules",
+          "data-governance",
+          "dashboard",
+          "first-project",
+          "adr-001-nextjs",
+          "dev-alex"
+        ]
+      },
+      "syntax": {
+        "noContext": {
+          "valid": 1,
+          "total": 1
+        },
+        "pasteAll": {
+          "valid": 1,
+          "total": 1
+        },
+        "pcl": {
+          "valid": 1,
+          "total": 1
+        }
+      },
+      "pclTokens": 12163,
+      "pasteAllTokens": 12886
+    },
+    {
+      "taskId": "task-16",
+      "category": "journey_correctness",
+      "noContext": {
+        "mean": 10,
+        "stddev": 0,
+        "runs": [
+          10
+        ]
+      },
+      "pasteAll": {
+        "mean": 8.8,
+        "stddev": 0,
+        "runs": [
+          8.8
+        ]
+      },
+      "pcl": {
+        "mean": 10,
+        "stddev": 0,
+        "runs": [
+          10
+        ]
+      },
+      "contextMetrics": {
+        "recall": 1,
+        "precision": 0.2,
+        "f1": 0.33333333333333337,
+        "retrieved": [
+          "product",
+          "billing-rules",
+          "data-governance",
+          "onboarding",
+          "notifications",
+          "adr-001-nextjs",
+          "first-project",
+          "sarah-pm",
+          "dev-alex",
+          "dashboard"
+        ],
+        "required": [
+          "onboarding",
+          "adr-001-nextjs"
+        ],
+        "hits": [
+          "onboarding",
+          "adr-001-nextjs"
+        ],
+        "misses": [],
+        "noise": [
+          "product",
+          "billing-rules",
+          "data-governance",
+          "notifications",
+          "first-project",
+          "sarah-pm",
+          "dev-alex",
+          "dashboard"
+        ]
+      },
+      "syntax": {
+        "noContext": {
+          "valid": 0,
+          "total": 1
+        },
+        "pasteAll": {
+          "valid": 0,
+          "total": 1
+        },
+        "pcl": {
+          "valid": 0,
+          "total": 1
+        }
+      },
+      "pclTokens": 13878,
+      "pasteAllTokens": 12886
+    },
+    {
+      "taskId": "task-17",
+      "category": "journey_correctness",
+      "noContext": {
+        "mean": 6.3,
+        "stddev": 0,
+        "runs": [
+          6.3
+        ]
+      },
+      "pasteAll": {
+        "mean": 8.8,
+        "stddev": 0,
+        "runs": [
+          8.8
+        ]
+      },
+      "pcl": {
+        "mean": 8.8,
+        "stddev": 0,
+        "runs": [
+          8.8
+        ]
+      },
+      "contextMetrics": {
+        "recall": 1,
+        "precision": 0.2222222222222222,
+        "f1": 0.3636363636363636,
+        "retrieved": [
+          "product",
+          "billing-rules",
+          "data-governance",
+          "first-project",
+          "onboarding",
+          "dashboard",
+          "dev-alex",
+          "sarah-pm",
+          "notifications"
+        ],
+        "required": [
+          "first-project",
+          "dev-alex"
+        ],
+        "hits": [
+          "first-project",
+          "dev-alex"
+        ],
+        "misses": [],
+        "noise": [
+          "product",
+          "billing-rules",
+          "data-governance",
+          "onboarding",
+          "dashboard",
+          "sarah-pm",
+          "notifications"
+        ]
+      },
+      "syntax": {
+        "noContext": {
+          "valid": 0,
+          "total": 0
+        },
+        "pasteAll": {
+          "valid": 0,
+          "total": 0
+        },
+        "pcl": {
+          "valid": 0,
+          "total": 0
+        }
+      },
+      "pclTokens": 11545,
+      "pasteAllTokens": 12886
+    },
+    {
+      "taskId": "task-18",
+      "category": "business_rule",
+      "noContext": {
+        "mean": 6,
+        "stddev": 0,
+        "runs": [
+          6
+        ]
+      },
+      "pasteAll": {
+        "mean": 8,
+        "stddev": 0,
+        "runs": [
+          8
+        ]
+      },
+      "pcl": {
+        "mean": 8,
+        "stddev": 0,
+        "runs": [
+          8
+        ]
+      },
+      "contextMetrics": {
+        "recall": 1,
+        "precision": 0.2222222222222222,
+        "f1": 0.3636363636363636,
+        "retrieved": [
+          "product",
+          "billing-rules",
+          "data-governance",
+          "sarah-pm",
+          "dev-alex",
+          "adr-001-nextjs",
+          "first-project",
+          "onboarding",
+          "dashboard"
+        ],
+        "required": [
+          "billing-rules",
+          "product"
+        ],
+        "hits": [
+          "billing-rules",
+          "product"
+        ],
+        "misses": [],
+        "noise": [
+          "data-governance",
+          "sarah-pm",
+          "dev-alex",
+          "adr-001-nextjs",
+          "first-project",
+          "onboarding",
+          "dashboard"
+        ]
+      },
+      "syntax": {
+        "noContext": {
+          "valid": 1,
+          "total": 1
+        },
+        "pasteAll": {
+          "valid": 0,
+          "total": 0
+        },
+        "pcl": {
+          "valid": 1,
+          "total": 1
+        }
+      },
+      "pclTokens": 13155,
+      "pasteAllTokens": 12886
+    },
+    {
+      "taskId": "task-19",
+      "category": "architecture",
+      "noContext": {
+        "mean": 6,
+        "stddev": 0,
+        "runs": [
+          6
+        ]
+      },
+      "pasteAll": {
+        "mean": 9,
+        "stddev": 0,
+        "runs": [
+          9
+        ]
+      },
+      "pcl": {
+        "mean": 7,
+        "stddev": 0,
+        "runs": [
+          7
+        ]
+      },
+      "contextMetrics": {
+        "recall": 1,
+        "precision": 0.3333333333333333,
+        "f1": 0.5,
+        "retrieved": [
+          "product",
+          "billing-rules",
+          "data-governance",
+          "first-project",
+          "dashboard",
+          "onboarding",
+          "dev-alex",
+          "sarah-pm",
+          "adr-001-nextjs"
+        ],
+        "required": [
+          "adr-001-nextjs",
+          "first-project",
+          "product"
+        ],
+        "hits": [
+          "adr-001-nextjs",
+          "first-project",
+          "product"
+        ],
+        "misses": [],
+        "noise": [
+          "billing-rules",
+          "data-governance",
+          "dashboard",
+          "onboarding",
+          "dev-alex",
+          "sarah-pm"
+        ]
+      },
+      "syntax": {
+        "noContext": {
+          "valid": 0,
+          "total": 0
+        },
+        "pasteAll": {
+          "valid": 1,
+          "total": 1
+        },
+        "pcl": {
+          "valid": 0,
+          "total": 1
+        }
+      },
+      "pclTokens": 12163,
+      "pasteAllTokens": 12886
+    },
+    {
+      "taskId": "task-20",
+      "category": "journey_correctness",
+      "noContext": {
+        "mean": 10,
+        "stddev": 0,
+        "runs": [
+          10
+        ]
+      },
+      "pasteAll": {
+        "mean": 10,
+        "stddev": 0,
+        "runs": [
+          10
+        ]
+      },
+      "pcl": {
+        "mean": 10,
+        "stddev": 0,
+        "runs": [
+          10
+        ]
+      },
+      "contextMetrics": {
+        "recall": 1,
+        "precision": 0.3333333333333333,
+        "f1": 0.5,
+        "retrieved": [
+          "product",
+          "billing-rules",
+          "data-governance",
+          "onboarding",
+          "first-project",
+          "dashboard",
+          "adr-001-nextjs",
+          "sarah-pm",
+          "dev-alex"
+        ],
+        "required": [
+          "onboarding",
+          "billing-rules",
+          "sarah-pm"
+        ],
+        "hits": [
+          "onboarding",
+          "billing-rules",
+          "sarah-pm"
+        ],
+        "misses": [],
+        "noise": [
+          "product",
+          "data-governance",
+          "first-project",
+          "dashboard",
+          "adr-001-nextjs",
+          "dev-alex"
+        ]
+      },
+      "syntax": {
+        "noContext": {
+          "valid": 0,
+          "total": 0
+        },
+        "pasteAll": {
+          "valid": 0,
+          "total": 0
+        },
+        "pcl": {
+          "valid": 1,
+          "total": 1
+        }
+      },
+      "pclTokens": 12163,
+      "pasteAllTokens": 12886
+    }
+  ],
+  "averages": {
+    "noContext": 6.039999999999999,
+    "pasteAll": 7.795,
+    "pcl": 8.175
+  },
+  "contextRetrieval": {
+    "recall": 1,
+    "precision": 0.2884325396825397,
+    "f1": 0.44282439782439786
+  },
+  "syntaxValidity": {
+    "noContext": 0.7,
+    "pasteAll": 0.6363636363636364,
+    "pcl": 0.36363636363636365
+  }
+}

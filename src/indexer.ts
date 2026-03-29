@@ -33,7 +33,7 @@ function detectType(path: string, productDir: string): FileType | null {
 export async function parseFile(
   path: string,
   productDir: string
-): Promise<{ file: Omit<IndexedFile, "embedding">; error?: string } | null> {
+): Promise<{ file: Omit<IndexedFile, "embedding" | "embeddingTitle">; error?: string } | null> {
   const type = detectType(path, productDir);
   if (!type) return null;
 
@@ -60,7 +60,7 @@ export async function parseFile(
   const id = String(fm.id ?? basename(path, extname(path)));
   const critical = type === "domain" && fm.critical === true;
 
-  const file: Omit<IndexedFile, "embedding"> = {
+  const file: Omit<IndexedFile, "embedding" | "embeddingTitle"> = {
     id,
     type,
     path,
@@ -96,13 +96,17 @@ export async function indexFile(
 
   const contentChanged = !existing || existing.hash !== file.hash;
 
-  // Compute embedding first, then single upsert — avoids race where search
+  // Compute embeddings first, then single upsert — avoids race where search
   // sees the file with an empty embedding between two DB writes.
+  // Title and body are embedded separately for split semantic scoring.
   let embedding: number[] = [];
+  let embeddingTitle: number[] = [];
   let embedded = false;
   if (embed && contentChanged) {
     try {
+      // Embed body for semantic search; title+summary for supplementary matching
       embedding = await embedText(file.fullText);
+      embeddingTitle = await embedText(file.title + " — " + file.summary);
       embedded = true;
     } catch (e) {
       // Embedding failure is non-fatal — keyword search still works
@@ -111,7 +115,7 @@ export async function indexFile(
   }
 
   if (contentChanged) {
-    upsertFile(db, { ...file, embedding });
+    upsertFile(db, { ...file, embedding, embeddingTitle });
   }
 
   return { indexed: contentChanged, embedded, error };
