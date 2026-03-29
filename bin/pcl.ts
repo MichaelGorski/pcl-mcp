@@ -282,24 +282,32 @@ async function init() {
 
   let created = 0;
   let skipped = 0;
-  for (const [rel, content] of Object.entries(TEMPLATES)) {
-    // Skip templates for categories already covered by scan imports
-    const category = templateTypeMap[rel];
-    if (category && coveredTypes.has(category)) {
-      console.log(`  ↷  ${rel} (category covered by scan, skipped)`);
-      skipped++;
-      continue;
-    }
 
-    const dest = join(productDir, rel);
-    try {
-      await access(dest, constants.F_OK);
-      console.log(`  ↷  ${rel} (exists, skipped)`);
-      skipped++;
-    } catch {
-      await writeFile(dest, content, "utf8");
-      console.log(`  ✓  ${rel}`);
-      created++;
+  const addExamples = await promptYesNo("Scaffold example files (product, personas, journeys, specs, decisions, domain)?");
+
+  if (!addExamples) {
+    console.log(`  ↷  Example files skipped`);
+    skipped += Object.keys(TEMPLATES).length;
+  } else {
+    for (const [rel, content] of Object.entries(TEMPLATES)) {
+      // Skip templates for categories already covered by scan imports
+      const category = templateTypeMap[rel];
+      if (category && coveredTypes.has(category)) {
+        console.log(`  ↷  ${rel} (category covered by scan, skipped)`);
+        skipped++;
+        continue;
+      }
+
+      const dest = join(productDir, rel);
+      try {
+        await access(dest, constants.F_OK);
+        console.log(`  ↷  ${rel} (exists, skipped)`);
+        skipped++;
+      } catch {
+        await writeFile(dest, content, "utf8");
+        console.log(`  ✓  ${rel}`);
+        created++;
+      }
     }
   }
 
@@ -436,10 +444,15 @@ ${BRIDGE_END}`;
 
   console.log(`\nDone! Created: ${created}, skipped: ${skipped}`);
   console.log("\nNext steps:");
-  console.log("  1. Edit product/product.md with your actual product details");
-  console.log("  2. Rename and fill in the example persona, journey, and spec files");
-  console.log("  3. Add your MCP server config (see README)");
-  console.log("  4. Start a new agent session — PCL loads automatically\n");
+  if (addExamples) {
+    console.log("  1. Edit product/product.md with your actual product details");
+    console.log("  2. Rename and fill in the example persona, journey, and spec files");
+    console.log("  3. Add your MCP server config (see README)");
+    console.log("  4. Start a new agent session — PCL loads automatically\n");
+  } else {
+    console.log("  1. Add your MCP server config (see README)");
+    console.log("  2. Start a new agent session — PCL loads automatically\n");
+  }
 }
 
 // ─── Status ──────────────────────────────────────────────────────────────────
@@ -564,7 +577,7 @@ function printHelp() {
 pcl — Product Context Layer CLI (v${version})
 
 Commands:
-  init [dir]              Scaffold /product folder with templates (default: ./product)
+  init [dir]              Set up PCL — prompts before adding example files (default: ./product)
   init --scan [dir]       Scan repo for existing .md files, import, then scaffold remaining templates
   init --scan-only [dir]  Scan and import only, don't scaffold templates
   serve                   Start the MCP server (reads --product-dir flag)
